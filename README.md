@@ -1,101 +1,87 @@
-# NoseBleedSection
+# ShotGeek
 
+![ShotGeek-display](https://github.com/user-attachments/assets/a6d0e3c6-1d8f-407f-a6ac-e645a631e4ed)
 
-![nose-beed-logo](https://github.com/Kudzmat/NoseBleedSection/assets/65554208/ab826d4c-46a3-46d9-b417-e18cb07f45ef)
-
-
-## Description
-
-Nosebleed Section is a Django web application that provides basketball enthusiasts with up-to-date NBA news and player statistics. Through the use of nba_api and beautifulsoup -
-it serves as a one-stop platform for users to stay informed about the latest happenings in the world of the National Basketball Association.
 
 ## Table of Contents
+1. [Introduction](#shotgeek)
+2. [Features](#features)
+3. [Getting Started](#getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Installation](#installation)
+4. [Usage](#usage)
+   - [Searching for a Player](#searching-for-a-player)
+   - [Comparing Players](#comparing-players)
+   - [Viewing Graphs](#viewing-graphs)
+5. [Contributing](#contributing)
+6. [License](#license)
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Contributing](#contributing)
-- [License](#license)
+## ShotGeek
 
-## Installation
-
-- nba_api is an API Client for www.nba.com. It requires Python 3.7+
-  ```
-  pip install nba_api
-  ```
-  
-
-To run the Project Name locally on your machine, follow these steps:
-
-- Clone the repository: git clone https://github.com/Kudzmat/NoseBleedSection.git
-- Navigate to the project directory: cd project-name
-- Create a virtual environment: python -m venv venv
-- Activate the virtual environment:
-  - On Windows: venv\Scripts\activate
-  - On macOS and Linux: source venv/bin/activate
-- Install the dependencies: pip install -r requirements.txt
-- Run the development server: python manage.py runserver
-
+ShotGeek is a Django web application that provides NBA stats, scores, and player comparisons. Whether you're a casual fan or a stats enthusiast, ShotGeek helps you explore player performance and compare careers with detailed tables and visualizations.
 
 ## Features
+- **Player Search**: Look up any NBA player by full name to access their career statistics.
+- **Career Stat Totals**: View detailed career stats for individual players.
+- **Graphical Analysis**: Use interactive graphs to visualize player performance over time.
+- **Player Comparison**: Compare two players' career stats side by side.
+- **Customizable Views**: Select stat categories for table and graph comparisons.
 
-- NBA News: Stay informed about the latest NBA news, rumors, and updates from reliable sources in the basketball community.
+## Getting Started
+### Prerequisites
+Ensure you have the following installed on your system:
+- Python 3.x
+- Django
+- PostgreSQL (or an alternative database)
 
-- Player Search: Use the player search feature to find detailed statistics and information about NBA players easily. Users can search for players by name, team, position, or other criteria.
-
-- Player comparison: Use the comparison feature to compare two players head-to-head.
-
+### Installation
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/shotgeek.git
+   cd shotgeek
+   ```
+2. Create and activate a virtual environment:
+   ```sh
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+3. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+4. Set up the database:
+   ```sh
+   python manage.py migrate
+   ```
+5. Run the development server:
+   ```sh
+   python manage.py runserver
+   ```
+6. Open your browser and visit: `http://127.0.0.1:8000/`
 
 ## Usage
+### Searching for a Player
+- Enter the player's full name in the search bar.
+- Ensure correct spelling to avoid incorrect results.
+- Example: Searching for `Charles Barkley` will take you to his player page.
 
-- Launch your web browser and go to http://localhost:8000/ to access the application.
-- Navigate through the different sections to explore NBA news and player statistics.
+### Comparing Players
+- Click the **Compare Players** button to access the comparison tool.
+- Enter the full name of two players to compare their stats side by side.
+- Select specific stat categories for in-depth analysis.
 
-<img width="1450" alt="Screen Shot 2023-11-02 at 3 48 59 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/571cf85c-b719-4c51-ad83-7dd4c663c480">
-
-  
-## Use the player search feature to find specific player information by entering their name.
-
-<img width="1353" alt="Screen Shot 2023-08-07 at 8 02 24 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/889ef29c-c6c9-4bec-a835-31a3b43b6439">
-
-
-## Browse various statistical categories for the regular season and playoffs.
-
-
-<img width="1356" alt="Screen Shot 2023-08-07 at 8 03 53 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/9e088068-9e44-47f6-85d6-1ab54e2409ad">
-
-## Enter two players to begin the comparison
-
-<img width="1450" alt="Screen Shot 2023-11-02 at 4 06 50 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/ed71bfa3-2622-417c-9fde-f22079afd387">
-
-## Select a statistical category to view a visual graph comparison between the players
-
-<img width="1438" alt="Screen Shot 2023-11-02 at 4 07 23 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/604173a9-abe6-4c2e-a9ba-5c16fd835575">
-
-<img width="1446" alt="Screen Shot 2023-11-02 at 4 07 47 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/b714ce9b-462d-4b67-ab5a-9090ad778f2b">
-
-
-## View a visual comparison of the two players
-
-<img width="1458" alt="Screen Shot 2023-11-02 at 4 08 57 PM" src="https://github.com/Kudzmat/NoseBleedSection/assets/65554208/5cf0d12b-39e2-4815-b5e3-fa23acd71cf6">
-
-
-
-## Use the News feature to catch up on the latest stories and events happening in the association 
-
-![8](https://github.com/Kudzmat/NoseBleedSection/assets/65554208/9f5095eb-04ca-4e78-b236-4f99f26701a7)
-
-
-
-## Technologies Used
-
-- Frontend: HTML, CSS, Bootstrap, Jinja Templates
-
-- Backend: Python, Django Web Framework
+### Viewing Graphs
+- Navigate to a player's page or the comparison page.
+- Use the dropdown menu to select a stat category.
+- The graph will display trends over the player's career.
 
 ## Contributing
 
 We welcome contributions from the open-source community. If you find any issues or want to suggest enhancements, feel free to create a pull request or submit an issue.
 For more information on contributing visit [https://github.com/Kudzmat/NoseBleedSection/blob/master/CONTRIBUTING.md](CONTRIBUTING.md)
+
+## License
+
+ShotGeek is licensed under the [Apache License 2.0](LICENSE).
+
 
