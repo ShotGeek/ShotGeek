@@ -30,14 +30,14 @@ ShotGeek is a Django web application that provides NBA stats, scores, and player
 ## Getting Started
 ### Prerequisites
 Ensure you have the following installed on your system:
-- Python 3.x
+- Python 3.9 and above
 - Django
-- PostgreSQL (or an alternative database)
+- PostgreSQL
 
 ### Installation
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/shotgeek.git
+   git clone https://github.com/ShotGeek/ShotGeek.git
    cd shotgeek
    ```
 2. Create and activate a virtual environment:
