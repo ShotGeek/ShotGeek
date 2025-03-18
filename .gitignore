@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+db.sqlite3
 
 # Distribution / packaging
 .Python
@@ -68,3 +69,4 @@ env.bak/
 venv.bak/
 
 
+.env

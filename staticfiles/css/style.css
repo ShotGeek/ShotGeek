@@ -1,0 +1,128 @@
+
+.jumbotron {
+    background-color: #f8f9fa;
+    padding: 150px 0;
+}
+
+.jumbotron h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.jumbotron p {
+    font-size: 24px;
+    margin-bottom: 40px;
+}
+
+.col-md-6 {
+    margin-bottom: 30px;
+}
+
+.col-md-6 img {
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+.col-md-6 h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.col-md-6 p {
+    font-size: 18px;
+}
+
+.table thead th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+}
+
+.table tbody td {
+    text-align: center;
+}
+
+.news-title {
+            margin-bottom: 10px;
+        }
+.news-link {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+.news-link:hover {
+            background-color: #0056b3;
+   }
+
+.custom-square {
+    background-color: #7E354D;
+    border-radius: 15px;
+    width: 100%;
+    padding-top: 100%; /* This makes the div a perfect square */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white; /* Text color */
+    overflow: hidden; /* Ensures content stays within the rounded corners */
+}
+
+.custom-square img {
+    max-width: 80%;
+    max-height: 80%;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.custom-square p {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.container .row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.stat-item {
+    flex: 1 1 50%; /* Make each stat item take up 50% of the container's width */
+    margin-bottom: 10px; /* Add some spacing between rows */
+}
+
+
+.rounded-frame {
+    border-radius: 15px; /* Adjust the value as needed */
+    overflow: hidden; /* Ensure inner content doesn't overflow the rounded corners */
+}
+
+.player-details {
+    font-size: 0.9rem; /* Decrease font size */
+}
+
+.player-details h4 {
+    font-size: 1.2rem; /* Decrease font size of player names */
+}
+
+.player-details .stat-item {
+    margin-bottom: 5px; /* Adjust spacing if needed */
+}
+
+.mini-profile-widget img.avatar {
+    max-width: 80%; /* Adjust image size if needed */
+    height: auto;
+}
