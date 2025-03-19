@@ -17,10 +17,23 @@ SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
 # career stats
 def player_career_numbers(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    has_proxy = False
 
-    # Pass the proxy URL directly to the PlayerCareerStats function
-    player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    try:
+        if SMARTPROXY_USERNAME is None or SMARTPROXY_PASSWORD is None:
+            raise ValueError("Proxy credentials are missing. Cannot create a valid proxy URL.")
+
+        proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+        has_proxy = True
+
+    except ValueError as e:
+        print(f"Error: {e}")
+        has_proxy = False
+
+    if has_proxy:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    else:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
 
     # Get the player's career stats as a dictionary
     career_dict = player_stats.get_normalized_dict()
