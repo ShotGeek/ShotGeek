@@ -1,32 +1,69 @@
-This isn’t an exhaustive list of things that you can’t do. Rather, take it in the spirit in which it’s intended - a guide to make it easier to enrich all of us and the technical communities in which we participate.
+# 🏀📈 ShotGeek Code of Conduct  
 
-This code of conduct applies to all spaces managed by the NoseBleedSection project. This includes any forums created by the project team which the community uses for communication. In addition, violations of this code outside these spaces may affect a person's ability to participate within them.
+Welcome to **ShotGeek**! As an open-source project, we strive to foster an **inclusive, collaborative, and respectful** community. Whether you're contributing code, designs, documentation, or just sharing ideas, we expect everyone to follow these guidelines.  
 
+---
 
-- **Be friendly and patient.**
+## Our Commitment  
 
-- **Be welcoming**. We strive to be a community that welcomes and supports people of all backgrounds and identities. This includes, but is not limited to members of any race, ethnicity, culture, national origin, colour, immigration status, social and economic class, educational level, sex, sexual orientation, gender identity and expression, age, size, family status, political belief, religion, and mental and physical ability.
+We pledge to make participation in ShotGeek a **harassment-free** experience for everyone, regardless of:  
+- Age, gender identity, or expression  
+- Race, ethnicity, or national origin  
+- Disability, appearance, or body size  
+- Religion, political beliefs, or background  
+- Level of experience in programming or basketball knowledge  
 
-- **Be considerate**. Your work will be used by other people, and you in turn will depend on the work of others. Any decision you take will affect users and colleagues, and you should take those consequences into account when making decisions. Remember that we're a world-wide community, so you might not be communicating in someone else's primary language.
+We believe in **learning together**, respecting different perspectives, and making ShotGeek a space where **everyone** can contribute.  
 
-- **Be respectful**. Not all of us will agree all the time, but disagreement is no excuse for poor behavior and poor manners. We might all experience some frustration now and then, but we cannot allow that frustration to turn into a personal attack. It’s important to remember that a community where people feel uncomfortable or threatened is not a productive one. Members of the NoseBleedSection community should be respectful when dealing with other members as well as with people outside the NoseBleedSection community.
+---
 
-- **Be careful in the words that you choose**. We are a community of professionals, and we conduct ourselves professionally. Be kind to others. Do not insult or put down other participants. Harassment and other exclusionary behavior aren't acceptable. This includes, but is not limited to:
-    - Violent threats or language directed against another person.
+## Expected Behavior  
 
-    - Discriminatory jokes and language.
+- **Be respectful & inclusive** – Everyone’s contribution is valuable.  
+- **Encourage new contributors** – Help others get started and grow.  
+- **Use welcoming language** – No offensive or exclusionary remarks.  
+- **Give constructive feedback** – Critique ideas, not people.  
+- **Collaborate openly** – We succeed by working together.  
+- **Respect differing opinions** – Disagreements happen, but handle them professionally.  
 
-    - Posting sexually explicit or violent material.
+---
 
-    - Posting (or threatening to post) other people's personally identifying information ("doxing").
+## Unacceptable Behavior  
 
-    - Personal insults, especially those using racist or sexist terms.
-        Unwelcome sexual attention.
+- **Harassment, discrimination, or personal attacks**  
+- **Hateful or derogatory comments** about race, gender, religion, etc.  
+- **Trolling, intimidation, or disruptive behavior**  
+- **Unwelcome sexual attention or advances**  
+- **Spamming, self-promotion, or advertising** unrelated to ShotGeek  
+- **Dismissing or bullying beginners or less experienced contributors**  
 
-    - Advocating for, or encouraging, any of the above behavior.
+If someone is making you uncomfortable, please **speak up** or **report it** to maintain a safe space for all.  
 
-    - Repeated harassment of others. In general, if someone asks you to stop, then stop.
+---
 
-- **When we disagree, try to understand why**. Disagreements, both social and technical, happen all the time and NoseBleedSection is no exception. It is important that we resolve disagreements and differing views constructively. Remember that we’re different. The strength of NoseBleedSection comes from its varied community, people from a wide range of backgrounds. Different people have different perspectives on issues. Being unable to understand why someone holds a viewpoint doesn’t mean that they’re wrong. Don’t forget that it is human to err and blaming each other doesn’t get us anywhere. Instead, focus on helping to resolve issues and learning from mistakes.
+## Reporting Issues  
 
-Original text courtesy of the Speak Up! project. 
+If you experience or witness any behavior that violates this Code of Conduct, please report it to the **ShotGeek maintainers**:  
+ 
+**Slack:** Direct message an admin ( @Kudzayi or @NawtyBean)  
+
+All reports will be handled **confidentially**. Violations may result in warnings, temporary bans, or removal from the project, depending on severity.  
+
+---
+
+## Enforcement  
+
+Maintainers are responsible for **upholding this Code of Conduct** and will take action when needed. If an issue is reported, we will:  
+1. **Listen and review the situation** carefully.  
+2. **Discuss the issue** with relevant parties.  
+3. **Take appropriate action** based on severity.  
+
+We are committed to **fairness, transparency, and protecting our community**.  
+
+---
+
+## Be Part of a Great Community!  
+
+By participating in ShotGeek, you agree to **follow this Code of Conduct**. We’re here to build something amazing together—so let’s keep this space welcoming, supportive, and fun for everyone!  
+
+**Happy contributing!**  
