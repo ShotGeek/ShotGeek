@@ -315,7 +315,7 @@ def show_career_awards_player2(request, player2_name, player2_id):
 
 # htmx linked function for updating league leadeers sectioin
 def update_league_leaders(request):
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url
 
     stats = ["PTS", "BLK", "REB", "AST", "STL", "FGM", "FG3M", "FTM", "EFF", "AST_TOV", "STL_TOV"]
     stats_map = {
@@ -375,7 +375,15 @@ def update_league_leaders(request):
 
         # Get the league leaders data from the external API
         for category in stats:
-            leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category, proxy=proxy_url)
+
+            # prodcution with proxy
+            if proxy_url:
+                leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category, proxy=proxy_url)
+            # development without proxy
+            else:
+                leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category)
+
+                
             leaders_info = leaders.get_dict()
 
             # Extract the relevant data from the response

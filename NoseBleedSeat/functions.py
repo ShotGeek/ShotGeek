@@ -11,6 +11,14 @@ SMARTPROXY_USERNAME = os.getenv('SMARTPROXY_USERNAME')
 SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
 
 
+def create_proxy_url():
+    """Helper function to create the proxy URL."""
+    if SMARTPROXY_USERNAME and SMARTPROXY_PASSWORD:
+        proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+        return proxy_url
+    else:
+        return None
+
 def fetch_player_data(player_name, player_id=None):
     """Helper function to fetch or create player headshot and bio."""
 
@@ -117,7 +125,7 @@ def get_player_awards(player_name, player_id):
 
 def get_league_leaders():
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
     stats = ["PTS", "BLK", "REB", "AST", "STL", "FGM", "FG3M", "FTM", "EFF", "AST_TOV", "STL_TOV"]
 
@@ -176,7 +184,15 @@ def get_league_leaders():
     else:
         # Get the league leaders data from the external API
         for category in stats:
-            leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category, proxy=proxy_url)
+
+            # production with proxy
+            if proxy_url:
+                leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category, proxy=proxy_url)
+            
+            # development without proxy
+            else:
+                leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category)
+            
             leaders_info = leaders.get_dict()
 
             # Extract the relevant data from the response
@@ -229,10 +245,15 @@ def get_league_leaders():
 def get_per_game_stats(player_id):
         
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
     stats = []
-    
-    player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # production with proxy
+    if proxy_url:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+
     career_dict = player_stats.get_normalized_dict()
     player_career_regular_season_totals = career_dict['CareerTotalsRegularSeason'][0]  # get career totals
     games_played = int(player_career_regular_season_totals['GP'])
@@ -266,11 +287,18 @@ def get_per_game_stats(player_id):
 
 def get_player_bio(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
     bio = {}
 
     # get player info
-    player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id, proxy=proxy_url)
+
+    # production with proxy
+    if proxy_url:
+        player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
+
     player_bio = player_info.get_dict()
 
     # player stats
@@ -363,13 +391,18 @@ def get_player_bio(player_id):
 
 def get_accolades(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
-
+    proxy_url = create_proxy_url()
     accolades = []
     accolades_history = {}
 
     # get list of accolades
-    player_accolades = playerawards.PlayerAwards(player_id=player_id, proxy=proxy_url)
+
+    # production with proxy
+    if proxy_url:
+        player_accolades = playerawards.PlayerAwards(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_accolades = playerawards.PlayerAwards(player_id=player_id)
 
     # add award descriptions to accolades empty list
     player_awards = player_accolades.get_data_frames()[0]

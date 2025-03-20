@@ -13,25 +13,23 @@ SMARTPROXY_URL = os.getenv('SMARTPROXY_URL')
 SMARTPROXY_USERNAME = os.getenv('SMARTPROXY_USERNAME')
 SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
 
+def create_proxy_url():
+    """Helper function to create the proxy URL."""
+    if SMARTPROXY_USERNAME and SMARTPROXY_PASSWORD:
+        proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+        return proxy_url
+    else:
+        return None
 
 # career stats
 def player_career_numbers(player_id):
     # Construct the proxy URL
-    has_proxy = False
+    proxy_url = create_proxy_url()
 
-    try:
-        if SMARTPROXY_USERNAME is None or SMARTPROXY_PASSWORD is None:
-            raise ValueError("Proxy credentials are missing. Cannot create a valid proxy URL.")
-
-        proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
-        has_proxy = True
-
-    except ValueError as e:
-        print(f"Error: {e}")
-        has_proxy = False
-
-    if has_proxy:
+    # production with proxy
+    if proxy_url:
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # development without proxy
     else:
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
 
@@ -44,9 +42,16 @@ def player_career_numbers(player_id):
 # regular season totals
 def player_regular_season(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
-    player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # production with proxy
+    if proxy_url:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+    
+    
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
     regular_season_totals = dict_response['SeasonTotalsRegularSeason']
@@ -57,9 +62,15 @@ def player_regular_season(player_id):
 # playoff totals
 def player_post_season(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
-    player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # production with proxy
+    if proxy_url:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
     post_season_totals = dict_response['SeasonTotalsPostSeason']
@@ -69,9 +80,15 @@ def player_post_season(player_id):
 
 def rankings_regular_season(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
-    player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # production with proxy
+    if proxy_url:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
     regular_season_rankings = dict_response['SeasonRankingsRegularSeason']
@@ -81,9 +98,16 @@ def rankings_regular_season(player_id):
 
 def rankings_post_season(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
-    player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # production with proxy
+    if proxy_url:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+    
+    
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
     post_season_rankings = dict_response['SeasonRankingsPostSeason']
@@ -94,10 +118,18 @@ def rankings_post_season(player_id):
 # retrieving player headshot and team id
 def get_player_image(player_id):
     # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
     # get player's team id
-    player_info = commonplayerinfo.CommonPlayerInfo(player_id, proxy=proxy_url)
+
+    # production with proxy
+    if proxy_url:
+        player_info = commonplayerinfo.CommonPlayerInfo(player_id, proxy=proxy_url)
+    # development without proxy
+    else:
+        player_info = commonplayerinfo.CommonPlayerInfo(player_id)
+    
+    
     player_bio = player_info.get_dict()
     player_data = player_bio['resultSets'][0]['rowSet'][0]
     team_id = int(player_data[18])
