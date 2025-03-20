@@ -1,112 +1,60 @@
-# CONTRIBUTING
+# Welcome to ShotGeek! 🏀📈
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+First off, thanks for your interest in contributing to **ShotGeek**! This project is open-source, and we welcome **developers, designers, technical writers, and basketball enthusiasts** to help us build something amazing. Whether you're fixing a bug, adding a feature, or improving documentation, your contributions are valuable!  
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+---
 
-## Installation
+## How to Contribute  
 
-If you would like to contribute to this project,please follow the following setup to install this project
+### Fork & Clone the Repo  
+1. **Fork** the repository by clicking the "Fork" button on GitHub.  
+2. Clone your fork locally:  
+   ```bash
+   git clone https://github.com/YOUR_GITHUB_USERNAME/ShotGeek.git
+   cd ShotGeek
+3. Add the main repository as a remote to stay updated:
+   ```bash
+   git remote add upstream https://github.com/ShotGeek/ShotGeek.git
+   ```
+4. Set Up Your Development Environment - refer to [README](https://github.com/ShotGeek/ShotGeek?tab=readme-ov-file#readme)
 
-1. Create a fork to your github repository
+## Pick an Issue & Start Coding!
+- Check out our Good First Issues for beginner-friendly tasks.
+- Comment on an issue to get assigned before starting work.
+- Create a new branch for your work:
+  ```bash
+  git checkout -b feature-your-branch-name
+  ```
+  - Once done, add your name to the CONTRIBUTORS.md file to be recognized for your work!
+    1. Open the [CONTRIBUTORS.md](https://github.com/ShotGeek/ShotGeek/edit/master/CONTRIBUTORS.md) file in the root directory.
+    2. Add your name and GitHub profile link under the Contributors List, like this:
+       ```markdown
+       # CONTRIBUTORS
+       
+       [Your Name](https://github.com/yourgithubusername)
+       ```
+- push your changes
+  ```bash
+  git push origin feature-your-branch-name 
+  ```
+## Submitting a Pull Request (PR)
+1. Go to the ShotGeek GitHub repo and open a pull request against the main branch.
+2. In your PR description, mention the issue number it addresses (e.g., Closes #42).
+3. Request a review from one of the maintainers.
+4. Be open to feedback! We'll review your PR and suggest any necessary changes.
 
-2. Clone the fork to your local machine 
+## Guidelines & Best Practices
+1. Follow the coding style – Keep your code clean and readable.
+2. Write meaningful commit messages – Explain what your change does.
+3. Be respectful – We're here to learn and build together.
 
-3. Create a virtual environment `python3 -m venv venv`
+## Join the Community!
+Got questions? Need help? Want to discuss ideas?
 
-4. Activate the local environment `. venv/bin/activate`
+- Read our Code of Coduct: [Code of Conduct](https://github.com/ShotGeek/ShotGeek/blob/master/CODE_OF_CONDUCT.md)
+- Join our Slack: [Slack Invite Link]( https://join.slack.com/t/shotgeek/shared_invite/zt-31ieqopac-EDCkgUm6afDNqeu6mQjncg)
+- Follow us on GitHub: [ShotGeek Repo](https://github.com/ShotGeek)
+- Follow us on Instagram: [ShotGeekHQ](https://www.instagram.com/shotgeekhq?igsh=MWJlbnhiemhtYnc4eA%3D%3D&utm_source=qr)
+- Follow us on LinkedIn: [ShotGeek LinkedIn](https://www.linkedin.com/company/shotgeek/)
 
-5. Install the dependencies for this project: `pip install -r requirements.txt`
-
-6. Make database migrations `python manage.py migrate`
-
-7. Run the server `python manage.py runserver`  
-
-
-## Pull Request Process
-
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
-   do not have permission to do that, you may request the second reviewer to merge it for you.
-
-## Code of Conduct
-This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
-
-### Our Pledge
-
-In the interest of fostering an open and welcoming environment, we as
-contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, gender identity and expression, level of experience,
-nationality, personal appearance, race, religion, or sexual identity and
-orientation.
-
-### Our Standards
-
-Examples of behavior that contributes to creating a positive environment
-include:
-
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
-
-Examples of unacceptable behavior by participants include:
-
-* The use of sexualized language or imagery and unwelcome sexual attention or
-advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
-  address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
-
-### Our Responsibilities
-
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
-
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
-
-### Scope
-
-This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.
-
-### Enforcement
-
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at [INSERT EMAIL ADDRESS]. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
-
-Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership.
-
-### Attribution
-
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at [http://contributor-covenant.org/version/1/4][version]
-
-[homepage]: http://contributor-covenant.org
-[version]: http://contributor-covenant.org/version/1/4/
+We’re excited to have you on board—let’s build something awesome together! 🏀📈
