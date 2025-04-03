@@ -31,7 +31,7 @@ COMP_OPTIONS = (
     ('FGA', 'Field Goal Attempts'),
     ('FG_PCT', 'Field Goal %'),
     ('FG3_PCT', '3 Point %'),
-    ('FT_PCT', 'Free Thrown%'),
+    ('FT_PCT', 'Free Throw %'),
 )
 
 GRAPH_OPTIONS = (
