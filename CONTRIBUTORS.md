@@ -6,6 +6,8 @@ We sincerely appreciate the efforts of all contributors who have helped improve 
 
 Here are the amazing individuals who have contributed to this project:
 
-- [Kudzayi Bamhare](https://github.com/Kudzmat)
-- [Shaun De Ponte](https://github.com/nawtybean)
-- [Lidya K Tilahun](https://github.com/LideviK)
+- [Kudzayi Bamhare](https://github.com/Kudzmat) 🏀
+- [Shaun De Ponte](https://github.com/nawtybean) 🏀
+- [Abhishek Saikia](https://github.com/KingrogKDR) 🏀
+- [Lidya K Tilahun](https://github.com/LideviK) 🏀
+

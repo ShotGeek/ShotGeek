@@ -28,6 +28,7 @@ COMP_OPTIONS = (
     ('APG', 'Assists Per Game'),
     ('BLKPG', 'Blocks Per Game'),
     ('STLPG', 'Steals Per Game'),
+    ('FGA', 'Field Goal Attempts'),
     ('FG_PCT', 'Field Goal %'),
     ('FG3_PCT', '3 Point %'),
     ('FT_PCT', 'Free Throw %'),
