@@ -30,7 +30,7 @@ ShotGeek is a Django web application that provides NBA stats, scores, and player
 ## Getting Started
 ### Prerequisites
 Ensure you have the following installed on your system:
-- Python 3.9 and above
+- Python 3.9 
 - Django
 - PostgreSQL
 
@@ -42,22 +42,28 @@ Ensure you have the following installed on your system:
    ```
 2. Create and activate a virtual environment:
    ```sh
-   python -m venv venv
+   python3.9 -m venv myenv
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 3. Install dependencies:
    ```sh
    pip install -r requirements.txt
    ```
-4. Set up the database:
+4. Uncomment DEVELOPMENT=True in .env:
+   ```vbnet
+   # .env
+   SECRET_KEY='django-insecure-enfgxe59+e1kt+c#unqrutb9y#_0)+aht&+@5@^r@pupks1wt8'
+   DEVELOPMENT=True
+   ```   
+6. Set up the database:
    ```sh
    python manage.py migrate
    ```
-5. Run the development server:
+7. Run the development server:
    ```sh
    python manage.py runserver
    ```
-6. Open your browser and visit: `http://127.0.0.1:8000/`
+8. Open your browser and visit: `http://127.0.0.1:8000/`
 
 ## Usage
 ### Searching for a Player
@@ -78,7 +84,7 @@ Ensure you have the following installed on your system:
 ## Contributing
 
 We welcome contributions from the open-source community. If you find any issues or want to suggest enhancements, feel free to create a pull request or submit an issue.
-For more information on contributing visit [https://github.com/Kudzmat/NoseBleedSection/blob/master/CONTRIBUTING.md](CONTRIBUTING.md)
+For more information on contributing visit [Contributing](https://github.com/ShotGeek/ShotGeek/blob/master/CONTRIBUTING.md)
 
 ## License
 
