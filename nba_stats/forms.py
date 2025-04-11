@@ -30,6 +30,7 @@ COMP_OPTIONS = (
     ('STLPG', 'Steals Per Game'),
     ('FGA', 'Field Goal Attempts'),
     ('FG_PCT', 'Field Goal %'),
+    ('FG3A', 'Three-Point Attempts'),
     ('FG3_PCT', '3 Point %'),
     ('FT_PCT', 'Free Throw %'),
 )
