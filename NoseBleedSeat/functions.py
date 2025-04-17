@@ -259,24 +259,39 @@ def get_per_game_stats(player_id):
     games_played = int(player_career_regular_season_totals['GP'])
 
     # points per game
-    ppg = round(int(player_career_regular_season_totals['PTS']) / games_played, 1)
-    stats.append(ppg)
+    if player_career_regular_season_totals['PTS'] is not None:
+        ppg = round(int(player_career_regular_season_totals['PTS']) / games_played, 1)
+        stats.append(ppg)
+    else:
+        stats.append(0)
 
     # rebounds per game
-    reb = round(int(player_career_regular_season_totals['REB']) / games_played, 1)
-    stats.append(reb)
+    if player_career_regular_season_totals['REB'] is not None:
+        reb = round(int(player_career_regular_season_totals['REB']) / games_played, 1)
+        stats.append(reb)
+    else:
+        stats.append(0)
 
     # assists per game
-    assists = round(int(player_career_regular_season_totals['AST']) / games_played, 1)
-    stats.append(assists)
+    if player_career_regular_season_totals['AST'] is not None:
+        assists = round(int(player_career_regular_season_totals['AST']) / games_played, 1)
+        stats.append(assists)
+    else:
+        stats.append(0)
 
     # steals per game
-    steals = round(int(player_career_regular_season_totals['STL']) / games_played, 1)
-    stats.append(steals)
+    if player_career_regular_season_totals['STL'] is not None:
+        steals = round(int(player_career_regular_season_totals['STL']) / games_played, 1)
+        stats.append(steals)
+    else:
+        stats.append(0)
 
     # blocks per game
-    blocks = round(int(player_career_regular_season_totals['BLK']) / games_played, 1)
-    stats.append(blocks)
+    if player_career_regular_season_totals['BLK'] is not None:
+        blocks = round(int(player_career_regular_season_totals['BLK']) / games_played, 1)
+        stats.append(blocks)
+    else:
+        stats.append(0)
 
     # years played
     years = len(career_dict['SeasonTotalsRegularSeason'])
