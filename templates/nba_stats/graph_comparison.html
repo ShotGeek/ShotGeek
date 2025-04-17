@@ -17,9 +17,8 @@
         <div class="card-body text-center">
           <h2 class="card-title" style="color: #b4513e;">{{ player1_full_name }}</h2>
           <a href="{% url 'nba_stats:player_details' player_full_name=player1_full_name player_id=player1_id %}">
-            <img src="{{ player1_headshot.0 }}" alt="{{ player1_full_name }} Headshot" class="rounded-circle img-fluid mt-3 w-75" style="background-color:{{ player1_headshot.1 }};">
+            <img src="{{ player1_headshot.0 }}" alt="{{ player1_full_name }} Headshot" class="rounded-circle img-fluid mt-3 w-50" style="background-color:{{ player1_headshot.1 }};">
           </a>
-          <h6><b>PPG:</b> {{ player1_bio.PTS }} | <b>RPG:</b> {{ player1_bio.REB }} | <b>APG:</b> {{ player1_bio.AST }}</h6>
         </div>
         <!-- Career Awards for Player 1 -->
         <div class="card-footer text-center" id="player1-awards">
@@ -40,9 +39,8 @@
         <div class="card-body text-center">
           <h2 class="card-title" style="color: #b4513e;">{{ player2_full_name }}</h2>
           <a href="{% url 'nba_stats:player_details' player_full_name=player2_full_name player_id=player2_id %}">
-            <img src="{{ player2_headshot.0 }}" alt="{{ player2_full_name }} Headshot" class="rounded-circle img-fluid mt-3 w-75" style="background-color:{{ player2_headshot.1 }};">
+            <img src="{{ player2_headshot.0 }}" alt="{{ player2_full_name }} Headshot" class="rounded-circle img-fluid mt-3 w-50" style="background-color:{{ player2_headshot.1 }};">
           </a>
-          <h6><b>PPG:</b> {{ player2_bio.PTS }} | <b>RPG:</b> {{ player2_bio.REB }} | <b>APG:</b> {{ player2_bio.AST }}</h6>
         </div>
         <!-- Career Awards for Player 2 -->
         <div class="card-footer text-center" id="player2-awards">
@@ -60,8 +58,50 @@
 
   <!-- Graph Section -->
   <div class="text-center mt-4">
-    <img src="data:image/png;base64,{{ graph }}" alt="Graph" class="img-fluid" style="max-width: 100%; height: auto;">
+    <canvas id="ComparisonChart"></canvas>
   </div>
+
+    <!-- Inline script with data -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const graphData = JSON.parse('{{ graph_data|safe|escapejs }}');
+  const ctx = document.getElementById('ComparisonChart').getContext('2d');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: graphData.labels,
+        datasets: graphData.datasets
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: '{{ player1_full_name }} and {{ player2_full_name }} {{ stat }} Comparison'
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Seasons'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: '{{ stat }}'
+                }
+            }
+        },
+        animation: {
+            duration: 1500,
+            easing: 'linear'
+        }
+    }
+});
+</script>
 
   <!-- Back to Comparison Button -->
   <div class="text-center mt-4">
@@ -69,8 +109,5 @@
       Back To {{ player1_full_name }} / {{ player2_full_name }} Comparison Page
     </a>
   </div>
-</div>
 
 {% endblock %}
-
-

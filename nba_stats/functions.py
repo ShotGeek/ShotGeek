@@ -157,173 +157,82 @@ def get_player_image(player_id):
     return None
 
 
-# def get_player_image2(player_id, player_name):
-#     # get player info
-#     player_info = commonplayerinfo.CommonPlayerInfo(player_id)
-#     player_bio = player_info.get_dict()
-#     player_data = player_bio['resultSets'][0]['rowSet'][0]
-#     team_id = int(player_data[18])
-#
-#     # Check for player image and team colour
-#     player = PlayerHeadshot.objects.filter(player_id=player_id).first()
-#     team_logo = TeamLogo.objects.filter(team_id=team_id).first()
-#
-#     if player and team_logo:
-#         return player.head_shot_url, team_logo.team_colour
-#
-#     else:
-#
-#         url = f'https://www.nba.com/player/{player_id}'
-#
-#         # Make an HTTP GET request to the URL
-#         response = requests.get(url)
-#         response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
-#
-#         # Parse the HTML content using BeautifulSoup
-#         soup = BeautifulSoup(response.content, 'html.parser')
-#
-#         # Find the player image tag within the appropriate class or element
-#         player_image_div = soup.find('div', {'class': 'PlayerSummary_mainInnerTeam____nFZ'})
-#         if player_image_div:
-#             img_tag = player_image_div.find('img',
-#                                             {'class': 'PlayerImage_image__wH_YX PlayerSummary_playerImage__sysif'})
-#
-#             if img_tag:
-#                 head_shot_url = img_tag['src']
-#
-#                 # save image to database
-#                 instance = PlayerHeadshot(player_id=player_id, player_name=player_name, head_shot_url=head_shot_url)
-#                 instance.save()
-#                 return head_shot_url, team_logo.team_colour
-#
-#     return None
-
-
-# function for getting player graph
+# function for getting comparison graph
 def get_graph(player1_id, player1_name, player2_id, player2_name, stat_category, title):
     # Get players yearly stats
     player1_stats = player_regular_season(player1_id)
     player2_stats = player_regular_season(player2_id)
 
-    for season_data in player1_stats:
+    # get player 1 per game stats
+    player1_stats = regular_season_per_game_stats(player1_stats)
+    # get player 1 percentage stats
+    player1_stats = get_percentage_stats(player1_stats)
 
-        # points per game
-        if season_data['GP'] > 0 and season_data['PTS'] is not None:
-            season_data['PPG'] = round(season_data['PTS'] / season_data['GP'], 2)
-        else:
-            season_data['PPG'] = 0  # To avoid division by zero in case GP is 0
+    # get player 2 per game stats
+    player2_stats = regular_season_per_game_stats(player2_stats)
+    # get player 2 percentage stats
+    player2_stats = get_percentage_stats(player2_stats)
 
-        # assists per game
-        if season_data['GP'] > 0 and season_data['AST'] is not None:
-            season_data['APG'] = round(season_data['AST'] / season_data['GP'], 1)
-        else:
-            season_data['APG'] = 0
+    # check if the players have played the same number of seasons
+    if len(player1_stats) < len(player2_stats):
+        seasons = len(player2_stats) # Use the longer player's seasons
+        player1_numbers = []
 
-        # blocks per game
-        if season_data['GP'] > 0 and season_data['BLK'] is not None:
-            season_data['BLKPG'] = round(season_data['BLK'] / season_data['GP'], 1)
-        else:
-            season_data['BLKPG'] = 0
+        # Fill in the missing seasons stats for player1 with 0s
+        # This is done to ensure that the x axis is the same for both players
+        for i in range(seasons):
+            try:
+                player1_numbers.append(player1_stats[i][stat_category])
+            except IndexError:
+                player1_numbers.append(0)  # Entire season is missing
+            except KeyError:
+                player1_numbers.append(0)  # Stat missing in this season
 
-        # rebounds per game
-        if season_data['GP'] > 0 and season_data['REB'] is not None:
-            season_data['RPG'] = round(season_data['REB'] / season_data['GP'], 1)
-        else:
-            season_data['RPG'] = 0
+        player2_numbers = [player2_stats[i][stat_category] for i in range(seasons)] # fill longer player's stats
+    
+    elif len(player2_stats) < len(player1_stats):
+        seasons = len(player1_stats)
+        player2_numbers = []
+        for i in range(seasons):
+            try:
+                player2_numbers.append(player2_stats[i][stat_category])
+            except IndexError:
+                player2_numbers.append(0)
+            except KeyError:
+                player2_numbers.append(0)
 
-        # steals per game
-        if season_data['GP'] > 0 and season_data['STL'] is not None:
-            season_data['STLPG'] = round(season_data['STL'] / season_data['GP'], 1)
-        else:
-            season_data['STLPG'] = 0
+        player1_numbers = [player1_stats[i][stat_category] for i in range(seasons)]
 
-        # Certain players (specifically from before 1980) don't have a 3pt %
-        if season_data['FG3_PCT'] is None:
-            season_data['FG3_PCT'] = 0
-
-    for season_data in player2_stats:
-
-        # points per game
-        if season_data['GP'] > 0 and season_data['PTS'] is not None:
-            season_data['PPG'] = round(season_data['PTS'] / season_data['GP'], 2)
-        else:
-            season_data['PPG'] = 0  # To avoid division by zero in case GP is 0
-
-        # assists per game
-        if season_data['GP'] > 0 and season_data['AST'] is not None:
-            season_data['APG'] = round(season_data['AST'] / season_data['GP'], 1)
-        else:
-            season_data['APG'] = 0
-
-        # blocks per game
-        if season_data['GP'] > 0 and season_data['BLK'] is not None:
-            season_data['BLKPG'] = round(season_data['BLK'] / season_data['GP'], 1)
-        else:
-            season_data['BLKPG'] = 0
-
-        # rebounds per game
-        if season_data['GP'] > 0 and season_data['REB'] is not None:
-            season_data['RPG'] = round(season_data['REB'] / season_data['GP'], 1)
-        else:
-            season_data['RPG'] = 0
-
-        # steals per game
-        if season_data['GP'] > 0 and season_data['STL'] is not None:
-            season_data['STLPG'] = round(season_data['STL'] / season_data['GP'], 1)
-        else:
-            season_data['STLPG'] = 0
-
-        # Certain players (specifically from before 1980) don't have a 3pt %
-        if season_data['FG3_PCT'] is None:
-            season_data['FG3_PCT'] = 0
-
-    #  We need to find which player has had the the shorter season between the two
-    # The shorter season will be used to plot the x axis
-    if len(player1_stats) > len(player2_stats):
-        seasons = len(player2_stats)
-        longer_player = player1_name
-        tenure = len(player1_stats)
-
+    #
     else:
         seasons = len(player1_stats)
-        longer_player = player2_name
-        tenure = len(player2_stats)
+        player1_numbers = [player1_stats[i][stat_category] for i in range(seasons)]
+        player2_numbers = [player2_stats[i][stat_category] for i in range(seasons)]
 
-    # Extract stat category we are comparing for both players
-    player1_numbers = [player1_stats[i][stat_category] for i in range(seasons)]
-    player2_numbers = [player2_stats[i][stat_category] for i in range(seasons)]
+    # Prepare data for Chart.js
+    labels = [f"Season {i+1}" for i in range(seasons)]
+    data = {
+        "labels": labels,
+        "datasets": [
+            {
+                "label": player1_name,
+                "data": player1_numbers,
+                "borderColor": "#000000",
+                "backgroundColor": "rgba(255, 253, 208, 0.50)",
+                "fill": True
+            },
+            {
+                "label": player2_name,
+                "data": player2_numbers,
+                "borderColor": "#b4513e",
+                "backgroundColor": "rgba(241, 84, 58, 0.50)",
+                "fill": True
+            }
+        ]
+    }
+    return data,title  # return the chart data and the stat category being compared
 
-    # Create a line chart using Matplotlib
-    plt.figure(figsize=(10, 6))
-
-    # plot both line graphs
-    # x-axis values to range(1, seasons + 1) to match the length of player1_numbers and player2_numbers.
-    plt.plot(range(1, seasons + 1), player1_numbers, label=player1_name, marker='o')
-    plt.plot(range(1, seasons + 1), player2_numbers, label=player2_name, marker='o')
-
-    # Chart labels
-    plt.title(f'{player1_name} and {player2_name} {title} Comparison')
-    plt.xlabel('Seasons')
-    plt.ylabel(title)
-    plt.legend()
-    plt.grid(True)
-
-    # Set x-axis ticks to be integer values only
-    # The plt.xticks function is used to set the x-axis ticks, and it expects a 1D array-like iterable input
-    plt.xticks(range(1, seasons + 1))
-
-    # Save the plot to a BytesIO object
-    img_data = BytesIO()
-    plt.savefig(img_data, format='png')
-    plt.close()
-
-    # Move the buffer's position to the start
-    img_data.seek(0)
-    encoded_image = base64.b64encode(img_data.read()).decode("utf-8")
-
-    return encoded_image
-
-
+# function to get individual player graph
 def get_player_graph(player_id, player_name, career_stats, stat_category, career_category, title):
     rankings_map = {
         'PPG': 'RANK_PTS',
@@ -342,8 +251,66 @@ def get_player_graph(player_id, player_name, career_stats, stat_category, career
         player_stats = career_stats['SeasonTotalsRegularSeason']
         graph_title = f"{player_name} Career Regular Season {title} Stats"
         title = f"{title} Per Game"
+        # get years played for x axis
+        years_played = get_years_played(player_stats)
+        # getting per game averages
+        player_stats = regular_season_per_game_stats(player_stats)
+        # getting percentage stats
+        player_stats = get_percentage_stats(player_stats)
 
-        for season_data in player_stats:
+        
+    elif career_category == 'Post Season':
+        player_stats = career_stats['SeasonTotalsPostSeason']
+        graph_title = f"{player_name} Career Post Season {title} Stats"
+        title = f"{title} Per Game"
+        # get years played for x axis
+        years_played = get_years_played(player_stats)
+        # getting per game averages
+        player_stats = post_season_per_game_stats(player_stats)
+        # getting percentage stats
+        player_stats = get_percentage_stats(player_stats)
+    
+    elif career_category == 'Reg. Season Rankings':
+        player_stats = career_stats['SeasonRankingsRegularSeason']
+        stat_category = rankings_map[stat_category]
+        graph_title = f"{player_name} Career Regular Season {title} Rankings"
+        title = f"{title} Ranking"
+        # get years played for x axis
+        years_played = get_years_played(player_stats)
+
+
+    elif career_category == 'Post Season Rankings':
+        player_stats = career_stats['SeasonRankingsPostSeason']
+        stat_category = rankings_map[stat_category]
+        graph_title = f"{player_name} Career Post Season {title} Rankings"
+        title = f"{title} Ranking"
+        # get years played for x axis
+        years_played = get_years_played(player_stats)
+
+     # x axis
+    seasons = len(years_played) #len(player_stats)
+    # Extract stat category data
+    player_numbers = [player_stats[i][stat_category] for i in range(seasons)]
+
+        # Prepare data for Chart.js
+    labels = [f"{i}" for i in years_played]
+    data = {
+        "labels": labels,
+        "datasets": [
+            {
+                "label": player_name,
+                "data": player_numbers,
+                "borderColor": "#b4513e",
+                "backgroundColor": "rgba(241, 84, 58, 0.50)",
+                "fill": True
+            },
+        ]}
+
+    return data, graph_title  # return the chart data and the stat category being compared
+
+# function to get player stats per game
+def regular_season_per_game_stats(player_stats):
+    for season_data in player_stats:
 
             # points per game
             if season_data['GP'] > 0 and season_data['PTS'] is not None:
@@ -379,87 +346,70 @@ def get_player_graph(player_id, player_name, career_stats, stat_category, career
             if season_data['FG3_PCT'] is None:
                 season_data['FG3_PCT'] = 0
 
-    elif career_category == 'Post Season':
-        player_stats = career_stats['SeasonTotalsPostSeason']
-        graph_title = f"{player_name} Career Post Season {title} Stats"
-        title = f"{title} Per Game"
+    return player_stats
 
-        # getting per game averages
-        for season_data in player_stats:
+# function to get post season per game stats
+def post_season_per_game_stats(player_stats):
+    for season_data in player_stats:
 
             # points per game
-            if season_data['GP'] > 0:
+            if season_data['GP'] > 0 and season_data['PTS'] is not None:
                 season_data['PPG'] = round(season_data['PTS'] / season_data['GP'], 2)
             else:
                 season_data['PPG'] = 0  # To avoid division by zero in case GP is 0
 
             # assists per game
-            if season_data['GP'] > 0:
+            if season_data['GP'] > 0 and season_data['AST'] is not None:
                 season_data['APG'] = round(season_data['AST'] / season_data['GP'], 1)
             else:
                 season_data['APG'] = 0
 
             # blocks per game
-            if season_data['GP'] > 0:
+            if season_data['GP'] > 0 and season_data['BLK'] is not None:
                 season_data['BLKPG'] = round(season_data['BLK'] / season_data['GP'], 1)
             else:
                 season_data['BLKPG'] = 0
 
             # rebounds per game
-            if season_data['GP'] > 0:
+            if season_data['GP'] > 0 and season_data['REB'] is not None:
                 season_data['RPG'] = round(season_data['REB'] / season_data['GP'], 1)
             else:
                 season_data['RPG'] = 0
 
             # steals per game
-            if season_data['GP'] > 0:
+            if season_data['GP'] > 0 and season_data['STL'] is not None:
                 season_data['STLPG'] = round(season_data['STL'] / season_data['GP'], 1)
             else:
                 season_data['STLPG'] = 0
 
+    return player_stats
 
-    elif career_category == 'Reg. Season Rankings':
-        player_stats = career_stats['SeasonRankingsRegularSeason']
-        stat_category = rankings_map[stat_category]
-        graph_title = f"{player_name} Career Regular Season {title} Rankings"
-        title = f"{title} Ranking"
+# function to get percentage stats
+def get_percentage_stats(player_stats):
+    for season_data in player_stats:
 
+        # certain players (specifically from before 1980) don't have a 3pt and other stats%
 
-    elif career_category == 'Post Season Rankings':
-        player_stats = career_stats['SeasonRankingsPostSeason']
-        stat_category = rankings_map[stat_category]
-        graph_title = f"{player_name} Career Post Season {title} Rankings"
-        title = f"{title} Ranking"
+        if season_data['FG_PCT'] is not None:
+            season_data['FG_PCT'] = round(season_data['FG_PCT'] * 100, 2)
+        else:
+            season_data['FG_PCT'] = 0
+        if season_data['FG3_PCT'] is not None:
+            season_data['FG3_PCT'] = round(season_data['FG3_PCT'] * 100, 2)
+        else:
+            season_data['FG3_PCT'] = 0
+        if season_data['FT_PCT'] is not None:
+            season_data['FT_PCT'] = round(season_data['FT_PCT'] * 100, 2)
+        else:
+            season_data['FT_PCT'] = 0
 
-    # x axis
-    seasons = len(player_stats)
+    return player_stats
 
-    # Extract stat category data
-    player_numbers = [player_stats[i][stat_category] for i in range(seasons)]
-
-    # Create a line chart using Matplotlib
-    plt.figure(figsize=(10, 6))
-
-    plt.plot(range(1, seasons + 1), player_numbers, label=player_name, marker='o')
-
-    # Chart labels
-    plt.title(f'{graph_title}')
-    plt.xlabel(f'{career_category} Years')
-    plt.ylabel(title)
-    plt.legend()
-    plt.grid(True)
-
-    # Set x-axis ticks to be integer values only
-    # The plt.xticks function is used to set the x-axis ticks, and it expects a 1D array-like iterable input
-    plt.xticks(range(1, seasons + 1))
-
-    # Save the plot to a BytesIO object
-    img_data = BytesIO()
-    plt.savefig(img_data, format='png')
-    plt.close()
-
-    # Move the buffer's position to the start
-    img_data.seek(0)
-    encoded_image = base64.b64encode(img_data.read()).decode("utf-8")
-
-    return encoded_image
+# function to get the years played by a player
+def get_years_played(player_stats):
+    years_played = []
+    for season_data in player_stats:
+        year = season_data['SEASON_ID']
+        if year not in years_played:
+            years_played.append(year)
+    return years_played

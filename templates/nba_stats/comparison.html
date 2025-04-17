@@ -17,7 +17,6 @@
             <a href="{% url 'nba_stats:player_details' player_full_name=player1_full_name player_id=player1_id %}">
               <img src="{{ player1_headshot.0 }}" style="background-color:{{ player1_headshot.1 }}" alt="{{ player1_full_name }} Headshot" class="rounded-circle img-fluid mt-3  w-75">
             </a>
-            <h6><b>PPG:</b> {{ player1_bio.PTS }} | <b>RPG:</b> {{ player1_bio.REB }} | <b>APG:</b> {{ player1_bio.AST }} | <b>STLPG:</b> {{ player1_bio.STL }} | <b>BLKPG:</b> {{ player1_bio.BLK }}</h6>
           </div>
                     <!-- career awards player1 -->
                     <div class="card-footer" id="player1-awards">
@@ -41,7 +40,6 @@
             <a href="{% url 'nba_stats:player_details' player_full_name=player2_full_name player_id=player2_id %}">
               <img src="{{ player2_headshot.0 }}" alt="{{ player2_full_name }} Headshot" class="rounded-circle img-fluid mt-3  w-75" style="background-color:{{ player2_headshot.1 }}">
             </a>
-            <h6><b>PPG:</b> {{ player2_bio.PTS }} | <b>RPG:</b> {{ player2_bio.REB }} | <b>APG:</b> {{ player2_bio.AST }}  | <b>STLPG:</b> {{ player2_bio.STL }} | <b>BLKPG:</b> {{ player2_bio.BLK }}</h6>
           </div>
                     <!-- career awards -->
                     <div class="card-footer" id="player2-awards">

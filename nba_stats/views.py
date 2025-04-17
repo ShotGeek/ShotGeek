@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from .forms import PlayerSearchForm, StatsDropdownForm, PlayerCompareForm, StatsCompForm, PlayerGraphForm
 from NoseBleedSeat.functions import *
@@ -103,10 +104,12 @@ def player_details(request, player_full_name, player_id):
             stat_option = graph_form.cleaned_data['stat_option']
 
             title = graph_form.get_graph_title(stat_option)
-            graph = get_player_graph(player_id=player_id, player_name=player_full_name, career_stats=career_stats,
+            graph,stat = get_player_graph(player_id=player_id, player_name=player_full_name, career_stats=career_stats,
                                      stat_category=stat_option, career_category=career_category,
                                      title=title)
+            # Append graph and stat to players info list and store in session for use in next view
             player_page_info.append(graph)
+            player_page_info.append(stat)
             return redirect('nba_stats:player_graph', player_id=player_id, player_full_name=player_full_name,
                             category=stat_option)
 
@@ -505,12 +508,12 @@ def compare_profiles(request, player1_full_name, player1_id, player2_full_name, 
         if form.is_valid():
             comp_option = form.cleaned_data['option']
             title = form.get_graph_title(comp_option)
-            graph = get_graph(player1_id, player1_full_name, player2_id, player2_full_name, comp_option, title)
+            graph_data, stat = get_graph(player1_id, player1_full_name, player2_id, player2_full_name, comp_option, title)
 
-            # Append graph to players info list and store in session for use in next view
+            # Append graph and stat to players info list and store in session for use in next view
             # This list will hold all the info we need for the comparison view
             comparison_info = [player1_id, player2_id, player1_headshot, player2_headshot, player1_full_name,
-                               player2_full_name, graph, player1_bio, player2_bio]
+                               player2_full_name, graph_data, player1_bio, player2_bio, stat]
             request.session['comparison_info'] = comparison_info
             return redirect('nba_stats:show_graph', player1_full_name=player1_full_name, player1_id=player1_id,
                             player2_full_name=player2_full_name, player2_id=player2_id)
@@ -560,7 +563,11 @@ def show_graph(request, player1_full_name, player1_id, player2_full_name, player
     player2_bio = comparison_info[8]
 
     # Get graph
-    graph = comparison_info[6]
+    graph_data = comparison_info[6]
+
+    # get stat comparison
+    stat = comparison_info[9]
+
 
     # Initialize forms
     player_form = PlayerSearchForm()
@@ -570,11 +577,12 @@ def show_graph(request, player1_full_name, player1_id, player2_full_name, player
                'player2_headshot': player2_headshot,
                'player1_full_name': player1_full_name,
                'player2_full_name': player2_full_name,
-               'graph': graph,
+               'graph_data': json.dumps(graph_data),
                'player1_id': player1_id,
                'player2_id': player2_id,
                'player1_bio': player1_bio,
-               'player2_bio': player2_bio
+               'player2_bio': player2_bio,
+               'stat': stat
                }
 
     return render(request, "nba_stats/graph_comparison.html", context)
@@ -587,7 +595,8 @@ def player_graph(request, player_full_name, player_id, category):
     if player_page_info:
         player_headshot = player_page_info[0]
         player_bio = player_page_info[1]
-        graph = player_page_info[3]
+        graph_data = player_page_info[3]
+        stat = player_page_info[4]
 
     # Initialize forms
     player_form = PlayerSearchForm()
@@ -596,9 +605,10 @@ def player_graph(request, player_full_name, player_id, category):
                'player_headshot': player_headshot,
                'player_full_name': player_full_name,
                'player_bio': player_bio,
-               'graph': graph,
+               'graph_data': json.dumps(graph_data),
                'player_id': player_id,
                'category': category,
+               'stat': stat
                }
 
     return render(request, "nba_stats/player_graph.html", context=context)

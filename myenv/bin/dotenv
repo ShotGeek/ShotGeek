@@ -1,4 +1,4 @@
-#!/Users/kudzayibamhare/Desktop/shotgeek-dev/ShotGeek/myenv/bin/python3.9
+#!/Users/kudzayibamhare/Desktop/shotgeek-work/ShotGeek/myenv/bin/python3.9
 # -*- coding: utf-8 -*-
 import re
 import sys

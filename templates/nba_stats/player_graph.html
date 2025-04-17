@@ -15,7 +15,7 @@
                 <!-- Player Image -->
                 <div class="col-md-4 text-center">
                     <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}">
-                        <img src="{{ player_headshot.0 }}" style="background-color: {{ player_headshot.1 }}" alt="Player Image" class="rounded-circle img-fluid mt-3  w-75">
+                        <img src="{{ player_headshot.0 }}" style="background-color: {{ player_headshot.1 }}" alt="Player Image" class="rounded-circle img-fluid mt-3  w-50">
                     </a>
                 </div>
 
@@ -48,9 +48,53 @@
             <div class="text-muted">#{{ player_bio.number }}</div>
         </div>
     </div>
-     <div class="text-center">
-    <img src="data:image/png;base64,{{ graph }}" alt="graph" style="max-width: 100%; height: auto;">
-</div>
+  <!-- Graph Section -->
+  <div class="text-center mt-4">
+    <canvas id="StatChart"></canvas>
+  </div>
+  <div id="chart-controls" class="my-3">
+    <button onclick="actions[0].handler(chart)">Add Data Point</button>
+    <button onclick="actions[1].handler(chart)">Remove Data Point</button>
+  </div>
+
+    <!-- Inline script with data -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const graphData = JSON.parse('{{ graph_data|safe|escapejs }}');
+  const ctx = document.getElementById('StatChart').getContext('2d');
+
+
+  new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: graphData.labels,
+          datasets: graphData.datasets
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              title: {
+                  display: true,
+                  text: '{{ stat }} Trends'
+              }
+          },
+          scales: {
+              x: {
+                  title: {
+                      display: true,
+                      text: 'Seasons'
+                  }
+              },
+              y: {
+                  title: {
+                      display: true,
+                      text: '{{ stat }}'
+                  }
+              }
+          }
+      }
+  });
+</script>
        <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}" class="btn btn-primary">Back To {{ player_full_name }} Page</a>
         </div>
 
