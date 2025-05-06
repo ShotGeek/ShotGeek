@@ -1,0 +1,119 @@
+/* ShotGeek Custom Theme - custom.css */
+
+/* ---------- GENERAL ---------- */
+body {
+    background-color: #fffdd0; /* Cream background */
+    color: #000000; /* Black text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ---------- HEADINGS ---------- */
+h1, h2, h3, h4, h5, h6 {
+    color: #f1543a; /* ShotGeek Orange */
+    font-weight: bold;
+}
+
+/* ---------- LINKS ---------- */
+a {
+    color: #b4513e; /* ShotGeek Red */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #f1543a;
+}
+
+/* ---------- CODE BLOCKS ---------- */
+code {
+    background-color: #000000;
+    color: #fffdd0;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+pre {
+    background-color: #000000;
+    color: #fffdd0;
+    padding: 10px;
+    border-left: 4px solid #f1543a;
+    overflow-x: auto;
+}
+
+/* ---------- EMPHASIS ---------- */
+strong, b {
+    color: #f1543a;
+}
+
+em, i {
+    color: #b4513e;
+}
+
+/* ---------- CUSTOM UTILITY CLASSES ---------- */
+
+/* Text colors */
+.orange-text {
+    color: #f1543a;
+}
+
+.red-text {
+    color: #b4513e;
+}
+
+.cream-text {
+    color: #fffdd0;
+}
+
+.black-text {
+    color: #000000;
+}
+
+.white-text {
+    color: #ffffff;
+}
+
+/* Backgrounds */
+.bg-orange {
+    background-color: #f1543a;
+    color: #fffdd0;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.bg-red {
+    background-color: #b4513e;
+    color: #ffffff;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.bg-black {
+    background-color: #000000;
+    color: #fffdd0;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.bg-cream {
+    background-color: #fffdd0;
+    color: #000000;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+/* Highlight box */
+.note {
+    background-color: #f1543a10;
+    border-left: 5px solid #f1543a;
+    padding: 10px 15px;
+    margin: 15px 0;
+    font-style: italic;
+}
+
+.responsive-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
+}
