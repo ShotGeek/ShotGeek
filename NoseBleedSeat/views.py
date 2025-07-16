@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from nba_stats.forms import PlayerSearchForm, TeamSearchForm
 from nba_api.stats.static import players
 from nba_stats.models import *
@@ -179,6 +180,11 @@ WORDS = [
 def home(request):
 
     word_of_the_day = random.choice(WORDS)
+    error_message = None
+    player_form = PlayerSearchForm()
+    player1_form = PlayerOneForm()
+    player2_form = PlayerTwoForm()
+
 
     # Delete session data
     request.session.pop('player_page_info', None)
@@ -194,23 +200,36 @@ def home(request):
     try:
         # Fetch player data
         player1_headshot, player1_bio, player1_id = fetch_player_data(player1)
-        player2_headshot, player2_bio, player2_id = fetch_player_data(player2)
 
-        if not player1_headshot or not player2_headshot or not player1_bio or not player2_bio or not player1_id or not player2_id:
+        # player1 validation check
+        if not player1_headshot or not player1_bio or not player1_id:
             raise ValueError("Player not found")
 
     except ValueError as e:
-        # Instead of redirecting, render your custom error page
-        context = {
-            'message': 'Player not found. Please check the spelling and try again.'
-        }
-        request.session.pop('player2', None)
         request.session.pop('player1', None)
-        return render(request, 'error.html', context)
+        messages.error(request, f"Could not find player '{player1}'. Please check your spelling and try again.")
+        return redirect('home')
+    
+    try:
+        # Fetch player data
+        player2_headshot, player2_bio, player2_id = fetch_player_data(player2)
 
-    # Prepare player images and awards
+        # player2 validation check
+        if not player2_headshot or not player2_bio or not player2_id:
+            raise ValueError("Player not found")
+
+    except ValueError as e:
+        request.session.pop('player2', None)
+        messages.error(request, f"Could not find player '{player2}'. Please check your spelling and try again.")
+        return redirect('home')
+
+    # Prepare player images
     player1_image = [player1_headshot.player_image_url, player1_headshot.background_colour]
     player2_image = [player2_headshot.player_image_url, player2_headshot.background_colour]
+
+    # get player full name
+    player1_fullname = player1_headshot.player_name
+    player2_fullname = player2_headshot.player_name 
 
     eastern_teams = EasternConferenceTeams.objects.all()
     western_teams = WesternConferenceTeams.objects.all()
@@ -218,10 +237,6 @@ def home(request):
     # Add player 1 and player 2 data to session for comparison
     player_compare_info.extend([player1_id, player2_id, player1, player2])
     request.session['player_compare_info'] = player_compare_info
-
-    player_form = PlayerSearchForm()
-    player1_form = PlayerOneForm()
-    player2_form = PlayerTwoForm()
 
     if request.method == 'POST':
         try:
@@ -237,8 +252,10 @@ def home(request):
 
                 # Search for the player data
                 player_headshot, player_bio, player_id = fetch_player_data(search_term)
-                if not player_headshot:
-                    raise ValueError("Player not found")
+                if not player_headshot or not player1_bio or not player_id:
+                    print("error caught")
+                    messages.error(request, f"Could not find player '{search_term}'. Please check your spelling and try again.")
+                    return redirect('home')
 
                 player_full_name = player_headshot.player_name
                 player_headshot = [player_headshot.player_image_url, player_headshot.background_colour]
@@ -272,10 +289,11 @@ def home(request):
         'player2_form': player2_form,
         'player1_image': player1_image,
         'player2_image': player2_image,
-        'player1': player1,
-        'player2': player2,
+        'player1': player1_fullname,
+        'player2': player2_fullname,
         'player1_bio': player1_bio,
         'player2_bio': player2_bio,
+        'error_message': error_message,
         'word_of_the_day': word_of_the_day
     }
 

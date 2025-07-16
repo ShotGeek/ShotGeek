@@ -13,6 +13,15 @@ Home
     <br><br>
     <div class="container mt-5">
         <h2><b>Head-To-Head Stats</b></h2>
+        {% if messages %}
+        <div class="alert alert-info" role="alert" style="background-color: #fffdd0;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}">
             <button class="btn btn-outline-success my-2 my-sm-0" id="loadButton" type="submit">Compare Players</button>
         </a>
@@ -87,18 +96,5 @@ Home
                 </div>
             </div>
         </div>
-
-        <!-- NBA Stat Leaders Table 
-        <div class="row mt-5" id="league-leaders">
-             <div class="col-12">
-                 <h2><b>NBA Stat Leaders</b></h2>
-                        <button class="btn btn-outline-success"
-                        hx-get="{% url 'update_league_leaders' %}"
-                        hx-target="#league-leaders"
-                        hx-swap="outerHTML"
-                        hx-trigger="click">
-                        Show NBA Stat Leaders
-                        </button>
-             </div> -->
     </div>
 {% endblock %}
