@@ -9,7 +9,6 @@ from nba_teams.functions import get_team
 from .forms import PlayerOneForm, PlayerTwoForm
 from nba_teams.models import *
 import random
-import requests
 import os
 from django.utils import timezone
 

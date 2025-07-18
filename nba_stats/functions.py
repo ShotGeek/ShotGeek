@@ -2,10 +2,6 @@ from nba_api.stats.static import players
 from nba_api.stats.endpoints import playercareerstats, commonplayerinfo
 import requests
 from bs4 import BeautifulSoup
-import matplotlib.pyplot as plt
-import base64
-from io import BytesIO
-import requests
 import os
 
 # Proxy configuration

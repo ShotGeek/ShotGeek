@@ -1,5 +1,4 @@
 from django import forms
-from django.core import validators
 
 
 class PlayerOneForm(forms.Form):
