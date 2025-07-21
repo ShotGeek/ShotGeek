@@ -31,8 +31,8 @@ First off, thanks for your interest in contributing to **ShotGeek**! This projec
        ```markdown
        # CONTRIBUTORS
        
-       [Your Name](https://github.com/yourgithubusername)🏀
-       # e.g. [Jerry West](https://github.com/ShotGeek/ShotGeek/edit/master/CONTRIBUTORS.md)🏀
+       [Your Name](https://github.com/{{ yourgithubusername }})🏀
+       # e.g. [Jerry West](https://github.com/thelogo)🏀
        ```
 - push your changes
   ```bash
