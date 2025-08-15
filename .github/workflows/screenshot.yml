@@ -29,7 +29,7 @@ on:
 
 jobs:
   screenshot:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       DEVELOPMENT: "1"  # Switch Django to sqlite-based development settings
 
@@ -43,14 +43,22 @@ jobs:
         # crashing during screenshot capture.
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            # Ubuntu 24.04 and later rename a few 64-bit libraries with the
-            # "t64" suffix.  These are the minimum shared objects Chromium
-            # requires to boot under Puppeteer.
-            libnss3 libatk1.0-0t64 libatk-bridge2.0-0 \
-            libdrm2 libxkbcommon0 libxss1 libxcomposite1 \
-            libxcursor1 libxdamage1 libxrandr2 libgbm1 \
-            libasound2t64 libxshmfence1 libgtk-3-0t64
+          # Minimal shared objects Chromium needs on Ubuntu 24.04 (t64 variants included).
+          sudo apt-get install -y --no-install-recommends \
+            libnss3 \
+            libatk1.0-0t64 \
+            libatk-bridge2.0-0 \
+            libdrm2 \
+            libxkbcommon0 \
+            libxss1 \
+            libxcomposite1 \
+            libxcursor1 \
+            libxdamage1 \
+            libxrandr2 \
+            libgbm1 \
+            libasound2t64 \
+            libxshmfence1 \
+            libgtk-3-0t64
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
