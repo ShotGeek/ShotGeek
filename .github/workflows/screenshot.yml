@@ -37,6 +37,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Chromium dependencies
+        # GitHub-hosted runners omit several shared libraries that Chromium
+        # expects. Install them explicitly so Puppeteer can launch without
+        # crashing during screenshot capture.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 \
+            libdrm2 libxkbcommon0 libxss1 libxcomposite1 \
+            libxcursor1 libxdamage1 libxrandr2 libgbm1 \
+            libasound2 libxshmfence1 libgtk-3-0
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

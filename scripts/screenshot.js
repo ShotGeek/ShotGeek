@@ -14,7 +14,10 @@
  *                screenshots/homepage.png.
  *
  * The function below performs four straightforward steps:
- *   1. Launch a headless browser.
+ *   1. Launch a headless browser. `--no-sandbox` and
+ *      `--disable-setuid-sandbox` flags are passed because GitHub Actions
+ *      runners do not provide a usable Chromium sandbox
+ *      (see https://pptr.dev/troubleshooting#chrome-headless-doesnt-launch-on-linux).
  *   2. Navigate to the requested URL and wait for network quiescence.
  *   3. Ensure the destination directory exists.
  *   4. Capture a full-page PNG screenshot and close the browser.
@@ -35,7 +38,9 @@ const puppeteer = require('puppeteer');
  * @param {string} outputPath - Path to write the PNG file.
  */
 async function captureScreenshot(url, outputPath) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'networkidle0' });
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
