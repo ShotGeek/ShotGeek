@@ -12,3 +12,5 @@ Here are the amazing individuals who have contributed to this project:
 - [Lidya K Tilahun](https://github.com/LideviK) 🏀
 - [Louis Oduor](https://github.com/louisoduor) 🏀
 - [Salim](https://github.com/theShinigami) 🏀
+- [Tim Schilling](https://github.com/tim-schilling)🏀
+- [Vianney Kimuri](https://github.com/KimVianney)🏀
