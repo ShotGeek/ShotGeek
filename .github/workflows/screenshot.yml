@@ -1,0 +1,66 @@
+# screenshot.yml
+#
+# This workflow captures visual snapshots of the ShotGeek homepage during pull
+# requests. It boots the Django development server, uses a headless Chromium
+# browser controlled by Puppeteer to grab screenshots, and uploads the images as
+# build artifacts. This enables reviewers to assess layout changes without
+# manually running the application.
+#
+# The job provisions Python and Node.js using GitHub-hosted runners, avoiding
+# any manual click-driven configuration. Artifacts are published through
+# `actions/upload-artifact` so screenshots remain attached to the workflow run.
+
+name: Capture UI screenshots
+
+on:
+  pull_request:
+    paths:
+      - 'templates/**'
+      - 'static/**'
+      - '.github/workflows/screenshot.yml'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Start Django development server
+        run: |
+          python manage.py migrate --noinput
+          python manage.py runserver 0.0.0.0:8000 &
+
+      - name: Wait for server
+        run: npx wait-on http://127.0.0.1:8000
+
+      - name: Capture homepage screenshot
+        run: node scripts/screenshot.js http://127.0.0.1:8000 screenshots/homepage.png
+
+      - name: Upload screenshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshots
+          path: screenshots

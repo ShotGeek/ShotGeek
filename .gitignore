@@ -70,3 +70,6 @@ venv.bak/
 
 
 .env
+
+# Node.js dependencies
+node_modules/

@@ -1,0 +1,17 @@
+{
+  "name": "shotgeek",
+  "version": "1.0.0",
+  "description": "![ShotGeek-display](https://github.com/user-attachments/assets/a6d0e3c6-1d8f-407f-a6ac-e645a631e4ed)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "puppeteer": "^24.16.2",
+    "wait-on": "^8.0.4"
+  }
+}
