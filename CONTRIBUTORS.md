@@ -16,4 +16,5 @@ Here are the amazing individuals who have contributed to this project:
 - [Vianney Kimuri](https://github.com/KimVianney) 🏀
 - [Ngazetungue Muheue](https://github.com/Ngazetungue) 🏀
 - [Chris Achinga](https://github.com/achingachris)🏀
+- [Julius Boakye](https://github.com/Darkbeast-glitch)🏀
 
