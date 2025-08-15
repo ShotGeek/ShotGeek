@@ -6,6 +6,11 @@
 # build artifacts. This enables reviewers to assess layout changes without
 # manually running the application.
 #
+# To keep the run fully deterministic and network-free, the job uses the
+# SQLite database from the project's development settings and seeds it with a
+# lightweight fixture (`nba_stats/fixtures/test_players.json`). This ensures the
+# homepage renders with predictable data and avoids external API calls.
+#
 # The job provisions Python and Node.js using GitHub-hosted runners, avoiding
 # any manual click-driven configuration. Artifacts are published through
 # `actions/upload-artifact` so screenshots remain attached to the workflow run.
@@ -25,6 +30,8 @@ on:
 jobs:
   screenshot:
     runs-on: ubuntu-latest
+    env:
+      DEVELOPMENT: "1"  # Switch Django to sqlite-based development settings
 
     steps:
       - name: Checkout repository
@@ -51,6 +58,7 @@ jobs:
       - name: Start Django development server
         run: |
           python manage.py migrate --noinput
+          python manage.py loaddata nba_stats/fixtures/test_players.json
           python manage.py runserver 0.0.0.0:8000 &
 
       - name: Wait for server
