@@ -11,3 +11,4 @@ Here are the amazing individuals who have contributed to this project:
 - [Abhishek Saikia](https://github.com/KingrogKDR) 🏀
 - [Lidya K Tilahun](https://github.com/LideviK) 🏀
 - [Louis Oduor](https://github.com/louisoduor) 🏀
+- [Salim](https://github.com/theShinigami) 🏀
