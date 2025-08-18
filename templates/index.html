@@ -6,116 +6,134 @@ Home
 
 {% block content %}
     {#
-        Homepage comparison view.
-        Each player card is structured with header, stat grid, and footer to
-        provide an app-like experience on mobile while preserving desktop layout.
+        Mobile head‑to‑head comparison view.
+        The header introduces the feature, followed by two player cards
+        (<article role="region">) and a sticky compare bar.  Markup uses
+        semantic elements and accessible labels so the layout remains usable
+        on both mobile and desktop.
     #}
-    <div class="jumbotron jumbotron-fluid">
-        <div class="container text-center">
-            <h1 class="lead">- {{ word_of_the_day }} -</h1>
-        </div>
-    </div>
-    <br><br>
-    <div class="container mt-5">
-        <h2><b>Head-To-Head Stats</b></h2>
+
+    <div class="container my-4">
+        <header class="text-center mb-4">
+            <strong class="d-block">ShotGeek</strong>
+            <h1 class="h2">Head-To-Head Stats</h1>
+            <p class="text-muted mb-0">Compare NBA players quickly on your phone.</p>
+        </header>
+
         {% if messages %}
         <div class="alert alert-info" role="alert" style="background-color: #fffdd0;">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
         {% endif %}
-        <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}">
-            <button class="btn btn-outline-success my-2 my-sm-0" id="loadButton" type="submit">Compare Players</button>
-        </a>
+
         <div class="row">
             <!-- Player 1 Card -->
             <div class="col-lg-6 col-md-12 mb-4">
-                <section class="player-card card h-100">
+                <article class="player-card card h-100" role="region" aria-labelledby="player1-heading">
                     <header class="card-body text-center">
-                        <form method="post" class="mb-3">
+                        <form method="post" class="player-search-field">
                             {% csrf_token %}
-                            {{ player1_form.as_p }}
-                            <button class="btn btn-outline-success" type="submit">Search Player</button>
+                            <label for="{{ player1_form.player1_name.id_for_label }}">Player 1</label>
+                            {{ player1_form.player1_name }}
+                            <button class="btn btn-primary w-100 mt-2" type="submit">Search</button>
                         </form>
+
                         <a href="{% url 'nba_stats:player_details' player_full_name=player1 player_id=player1_id %}">
-                            <img src="{{ player1_image.0 }}" style="background-color: {{ player1_image.1 }}" class="player-avatar rounded-circle img-fluid mt-3" alt="avatar">
+                            {% if player1_image.0 %}
+                                <img src="{{ player1_image.0 }}" width="128" height="128" loading="lazy" onerror="this.onerror=null;this.src='{% static 'images/avatar-silhouette.svg' %}'" class="player-avatar rounded-circle img-fluid mt-3" alt="{{ player1 }} avatar">
+                            {% else %}
+                                <div class="avatar-skeleton skeleton mt-3" aria-busy="true"></div>
+                            {% endif %}
                         </a>
-                        <h4 class="player-name mt-3">{{ player1 }}</h4>
-                        <ul class="player-stats">
-                            <li class="stat-item"><b>School:</b> {{ player1_bio.school }}</li>
-                            <li class="stat-item"><b>Country:</b> {{ player1_bio.country }}</li>
-                            <li class="stat-item"><b>Height:</b> {{ player1_bio.height }}</li>
-                            <li class="stat-item"><b>Weight:</b> {{ player1_bio.weight }}</li>
-                            <li class="stat-item"><b>Year:</b> {{ player1_bio.year }}</li>
-                            <li class="stat-item"><b>Number:</b> {{ player1_bio.number }}</li>
-                            <li class="stat-item"><b>Position:</b> {{ player1_bio.position }}</li>
-                            <li class="stat-item"><b>Status:</b> {{ player1_bio.status }}</li>
-                            <li class="stat-item"><b>PPG:</b> {{ player1_bio.PTS }}</li>
-                            <li class="stat-item"><b>RPG:</b> {{ player1_bio.REB }}</li>
-                            <li class="stat-item"><b>APG:</b> {{ player1_bio.AST }}</li>
-                            <li class="stat-item"><b>STLPG:</b> {{ player1_bio.STL }}</li>
-                            <li class="stat-item"><b>BLKPG:</b> {{ player1_bio.BLK }}</li>
-                        </ul>
+                        <h4 id="player1-heading" class="player-name mt-3">{{ player1 }}</h4>
+                        <dl class="player-stats">
+                            <div class="stat-item"><dt>School</dt><dd>{{ player1_bio.school }}</dd></div>
+                            <div class="stat-item"><dt>Country</dt><dd>{{ player1_bio.country }}</dd></div>
+                            <div class="stat-item"><dt>Height</dt><dd>{{ player1_bio.height }}</dd></div>
+                            <div class="stat-item"><dt>Weight</dt><dd>{{ player1_bio.weight }}</dd></div>
+                            <div class="stat-item"><dt>Year</dt><dd>{{ player1_bio.year }}</dd></div>
+                            <div class="stat-item"><dt>Number</dt><dd>{{ player1_bio.number }}</dd></div>
+                            <div class="stat-item"><dt>Position</dt><dd>{{ player1_bio.position }}</dd></div>
+                            <div class="stat-item"><dt>Status</dt><dd>{{ player1_bio.status }}</dd></div>
+                            <div class="stat-item"><dt>PPG</dt><dd>{{ player1_bio.PTS }}</dd></div>
+                            <div class="stat-item"><dt>RPG</dt><dd>{{ player1_bio.REB }}</dd></div>
+                            <div class="stat-item"><dt>APG</dt><dd>{{ player1_bio.AST }}</dd></div>
+            <div class="stat-item"><dt>STLPG</dt><dd>{{ player1_bio.STL }}</dd></div>
+                            <div class="stat-item"><dt>BLKPG</dt><dd>{{ player1_bio.BLK }}</dd></div>
+                        </dl>
                     </header>
 
                     <!-- career awards player1 -->
-                    <footer class="card-footer" id="player1-awards">
-                        <button class="btn btn-outline-success"
-                        hx-get="{% url 'show_career_awards_player1' player1_name=player1 player1_id=player1_id %}"
-                        hx-target="#player1-awards"
-                        hx-swap="outerHTML"
-                        hx-trigger="click">
-                        Show Career Awards
+                    <footer class="card-footer d-flex justify-content-between" id="player1-awards">
+                        <button class="btn btn-secondary"
+                            hx-get="{% url 'show_career_awards_player1' player1_name=player1 player1_id=player1_id %}"
+                            hx-target="#player1-awards"
+                            hx-swap="outerHTML"
+                            hx-trigger="click">
+                            Show Career Awards
                         </button>
+                        <button class="btn btn-tertiary" type="button">Share</button>
                     </footer>
-                </section>
+                </article>
             </div>
 
             <!-- Player 2 Card -->
             <div class="col-lg-6 col-md-12 mb-4">
-                <section class="player-card card h-100">
+                <article class="player-card card h-100" role="region" aria-labelledby="player2-heading">
                     <header class="card-body text-center">
-                        <form method="post" class="mb-3">
+                        <form method="post" class="player-search-field">
                             {% csrf_token %}
-                            {{ player2_form.as_p }}
-                            <button class="btn btn-outline-success" type="submit">Search Player</button>
+                            <label for="{{ player2_form.player2_name.id_for_label }}">Player 2</label>
+                            {{ player2_form.player2_name }}
+                            <button class="btn btn-primary w-100 mt-2" type="submit">Search</button>
                         </form>
+
                         <a href="{% url 'nba_stats:player_details' player_full_name=player2 player_id=player2_id %}">
-                            <img src="{{ player2_image.0 }}" style="background-color: {{ player2_image.1 }}" class="player-avatar rounded-circle img-fluid mt-3" alt="avatar">
+                            {% if player2_image.0 %}
+                                <img src="{{ player2_image.0 }}" width="128" height="128" loading="lazy" onerror="this.onerror=null;this.src='{% static 'images/avatar-silhouette.svg' %}'" class="player-avatar rounded-circle img-fluid mt-3" alt="{{ player2 }} avatar">
+                            {% else %}
+                                <div class="avatar-skeleton skeleton mt-3" aria-busy="true"></div>
+                            {% endif %}
                         </a>
-                        <h4 class="player-name mt-3">{{ player2 }}</h4>
-                        <ul class="player-stats">
-                            <li class="stat-item"><b>School:</b> {{ player2_bio.school }}</li>
-                            <li class="stat-item"><b>Country:</b> {{ player2_bio.country }}</li>
-                            <li class="stat-item"><b>Height:</b> {{ player2_bio.height }}</li>
-                            <li class="stat-item"><b>Weight:</b> {{ player2_bio.weight }}</li>
-                            <li class="stat-item"><b>Year:</b> {{ player2_bio.year }}</li>
-                            <li class="stat-item"><b>Number:</b> {{ player2_bio.number }}</li>
-                            <li class="stat-item"><b>Position:</b> {{ player2_bio.position }}</li>
-                            <li class="stat-item"><b>Status:</b> {{ player2_bio.status }}</li>
-                            <li class="stat-item"><b>PPG:</b> {{ player2_bio.PTS }}</li>
-                            <li class="stat-item"><b>RPG:</b> {{ player2_bio.REB }}</li>
-                            <li class="stat-item"><b>APG:</b> {{ player2_bio.AST }}</li>
-                            <li class="stat-item"><b>STLPG:</b> {{ player2_bio.STL }}</li>
-                            <li class="stat-item"><b>BLKPG:</b> {{ player2_bio.BLK }}</li>
-                        </ul>
+                        <h4 id="player2-heading" class="player-name mt-3">{{ player2 }}</h4>
+                        <dl class="player-stats">
+                            <div class="stat-item"><dt>School</dt><dd>{{ player2_bio.school }}</dd></div>
+                            <div class="stat-item"><dt>Country</dt><dd>{{ player2_bio.country }}</dd></div>
+                            <div class="stat-item"><dt>Height</dt><dd>{{ player2_bio.height }}</dd></div>
+                            <div class="stat-item"><dt>Weight</dt><dd>{{ player2_bio.weight }}</dd></div>
+                            <div class="stat-item"><dt>Year</dt><dd>{{ player2_bio.year }}</dd></div>
+                            <div class="stat-item"><dt>Number</dt><dd>{{ player2_bio.number }}</dd></div>
+                            <div class="stat-item"><dt>Position</dt><dd>{{ player2_bio.position }}</dd></div>
+                            <div class="stat-item"><dt>Status</dt><dd>{{ player2_bio.status }}</dd></div>
+                            <div class="stat-item"><dt>PPG</dt><dd>{{ player2_bio.PTS }}</dd></div>
+                            <div class="stat-item"><dt>RPG</dt><dd>{{ player2_bio.REB }}</dd></div>
+                            <div class="stat-item"><dt>APG</dt><dd>{{ player2_bio.AST }}</dd></div>
+                            <div class="stat-item"><dt>STLPG</dt><dd>{{ player2_bio.STL }}</dd></div>
+                            <div class="stat-item"><dt>BLKPG</dt><dd>{{ player2_bio.BLK }}</dd></div>
+                        </dl>
                     </header>
 
                     <!-- career awards -->
-                    <footer class="card-footer" id="player2-awards">
-                        <button class="btn btn-outline-success"
-                        hx-get="{% url 'show_career_awards_player2' player2_name=player2 player2_id=player2_id %}"
-                        hx-target="#player2-awards"
-                        hx-swap="outerHTML"
-                        hx-trigger="click">
-                        Show Career Awards
+                    <footer class="card-footer d-flex justify-content-between" id="player2-awards">
+                        <button class="btn btn-secondary"
+                            hx-get="{% url 'show_career_awards_player2' player2_name=player2 player2_id=player2_id %}"
+                            hx-target="#player2-awards"
+                            hx-swap="outerHTML"
+                            hx-trigger="click">
+                            Show Career Awards
                         </button>
+                        <button class="btn btn-tertiary" type="button">Share</button>
                     </footer>
-                </section>
+                </article>
             </div>
         </div>
+    </div>
+
+    <div class="compare-bar">
+        <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}">
+            <button class="btn btn-primary" {% if not player1 or not player2 %}disabled{% endif %}>Compare Players</button>
+        </a>
     </div>
 {% endblock %}

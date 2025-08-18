@@ -6,10 +6,44 @@
  * while mobile tweaks improve readability and tap usability.
  */
 
+/*
+ * Design tokens used across the site.  Colors match the existing desktop
+ * palette so re‑using these variables does not alter the desktop look and
+ * feel.  Additional tokens enable dark mode, spacing, and component
+ * elevation.  Font sizing scales up slightly on narrow viewports to keep
+ * content legible without zooming.
+ */
 :root {
+    /* Color scheme */
+    --bg: #fff;
+    --surface: #f7f7f8;
+    --text: #111;
+    --muted: #5c5f62;
+    --border: #e5e7eb;
+    --primary: #f1543a; /* matches existing brand red */
+    --on-primary: #fff;
+
+    /* Shape & elevation */
+    --radius: 12px;
+    --elev: 0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.06);
+
+    /* Typography & spacing */
     --font-base: 16px;
     --font-heading: 20px;
     --space-unit: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0b0c0e;
+        --surface: #16181b;
+        --text: #f1f5f9;
+        --muted: #a1a1aa;
+        --border: #2a2e34;
+        --primary: #ff554d;
+        --on-primary: #0b0c0e;
+        --elev: none;
+    }
 }
 
 @media (max-width: 576px) {
@@ -22,30 +56,63 @@
 body {
     font-family: "Courier New", Courier, monospace;
     font-size: var(--font-base);
+    background: var(--bg);
+    color: var(--text);
 }
 
 a {
     text-decoration: none;
     font-weight: bold;
-    color: #f1543a;
+    color: var(--primary);
 }
 
 a:hover {
-    color: #d1432f;
+    color: var(--primary);
+    opacity: .85;
 }
 
 .navbar-nav .nav-link {
-    color: #b4513e !important;
+    color: #b4513e !important; /* existing desktop style */
 }
 
-button, .btn {
-    background-color: #f1543a;
-    color: white;
+/* Button hierarchy */
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border: none;
 }
 
-button:hover, .btn:hover {
-    background-color: #d1432f;
-    color: white;
+.btn-primary:hover {
+    background-color: var(--primary);
+    opacity: .9;
+    color: var(--on-primary);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: var(--on-primary);
+}
+
+.btn-tertiary {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+}
+
+.btn-tertiary:hover {
+    background: transparent;
+    text-decoration: underline;
+}
+
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }
 
 /* Loader image centered over a translucent overlay */
@@ -75,6 +142,10 @@ button:hover, .btn:hover {
 /* Player card adjustments */
 .player-card {
     padding: calc(var(--space-unit) * 2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--elev);
 }
 
 .player-card img.player-avatar {
@@ -97,13 +168,21 @@ button:hover, .btn:hover {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-unit);
-    list-style: none;
     padding-left: 0;
     margin-bottom: 0;
 }
 
 .player-stats .stat-item {
-    margin-bottom: 0;
+    display: contents;
+}
+
+.player-stats dt {
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.player-stats dd {
+    margin: 0 0 var(--space-unit) 0;
 }
 
 @media (max-width: 360px) {
@@ -126,6 +205,79 @@ button:hover, .btn:hover {
     .player-card .btn {
         width: 100%;
     }
+}
+
+/* Search field layout ensures label, input and button stay readable on phones */
+.player-search-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.player-search-field input {
+    min-height: 48px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 0 0.5rem;
+}
+
+.player-search-field button {
+    min-height: 48px;
+    border-radius: 10px;
+    margin-top: 8px;
+}
+
+/* Skeleton placeholder with reduced-motion respect */
+.skeleton {
+    background: var(--border);
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    height: 100%;
+    width: 150%;
+    background: linear-gradient(90deg, var(--border) 25%, var(--surface) 37%, var(--border) 63%);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton::after {
+        animation: none;
+    }
+}
+
+.avatar-skeleton {
+    width: 128px;
+    height: 128px;
+    margin: 0 auto;
+}
+
+/* Sticky compare bar at bottom */
+.compare-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    box-shadow: var(--elev);
+    text-align: center;
+}
+
+.compare-bar button {
+    min-height: 48px;
+    border-radius: 10px;
+    width: 100%;
 }
 
 .jumbotron {
