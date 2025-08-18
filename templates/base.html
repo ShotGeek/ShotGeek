@@ -89,44 +89,28 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    // Show loader and set a max timeout to hide it
-    const showLoader = () => {
+    document.addEventListener('DOMContentLoaded', function() {
         const loader = document.getElementById('loader');
-        loader.style.display = 'block';
-
-        // Hide the loader after 10 seconds (10000ms)
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 5000);
-    };
-
-    // Add click event listeners to all buttons
-    document.querySelectorAll('button').forEach(function(button) {
-        button.addEventListener('click', showLoader);
-    });
-
-    // Add click event listeners to all anchor links
-    document.querySelectorAll('a').forEach(function(link) {
-        link.addEventListener('click', function(event) {
-            // Only show loader for internal or same-origin links
-            if (
-                link.href &&
-                !link.href.startsWith('mailto:') &&
-                !link.href.startsWith('tel:') &&
-                link.origin === window.location.origin
-            ) {
-                showLoader();
+        const showLoader = () => {
+            if (loader) {
+                loader.style.display = 'block';
+                // Safety timeout in case navigation is prevented
+                setTimeout(() => {
+                    if (loader) loader.style.display = 'none';
+                }, 5000);
             }
+        };
+
+        // Only show loader on actual page navigations/unloads
+        window.addEventListener('beforeunload', () => {
+            showLoader();
+        });
+
+        // If navigation was initiated but then canceled (e.g., bfcache or prompt), hide it
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted && loader) loader.style.display = 'none';
         });
     });
-});
-
-        // For htmx requests (if using htmx for AJAX calls)
-        document.addEventListener('htmx:configRequest', showLoader);
-        document.addEventListener('htmx:afterOnLoad', function() {
-            document.getElementById('loader').style.display = 'none';
-        });
 </script>
 
 </body>

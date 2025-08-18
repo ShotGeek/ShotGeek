@@ -139,6 +139,25 @@ a:hover {
     }
 }
 
+/* Smaller navbar on mobile */
+@media (max-width: 768px) {
+    .navbar {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .navbar-brand {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+}
+
 /* Player card adjustments */
 .player-card {
     padding: calc(var(--space-unit) * 2);

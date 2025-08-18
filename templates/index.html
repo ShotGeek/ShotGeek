@@ -5,13 +5,11 @@ Home
 {% endblock %}
 
 {% block content %}
-    {#
-        Mobile head‑to‑head comparison view.
+        <!-- Mobile head‑to‑head comparison view.
         The header introduces the feature, followed by two player cards
         (<article role="region">) and a sticky compare bar.  Markup uses
         semantic elements and accessible labels so the layout remains usable
-        on both mobile and desktop.
-    #}
+        on both mobile and desktop. -->
 
     <div class="container my-4">
         <header class="text-center mb-4">
@@ -131,9 +129,75 @@ Home
         </div>
     </div>
 
-    <div class="compare-bar">
-        <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}">
+    <div class="compare-bar d-flex justify-content-between align-items-center">
+        <button class="btn btn-secondary player-nav-btn" id="player1-nav-btn" data-target="#player1-heading" style="flex: 1; margin-right: 8px;">
+            {{ player1|default:"Player 1" }}
+        </button>
+        <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}" style="flex: 2;">
             <button class="btn btn-primary" {% if not player1 or not player2 %}disabled{% endif %}>Compare Players</button>
         </a>
+        <button class="btn btn-secondary player-nav-btn" id="player2-nav-btn" data-target="#player2-heading" style="flex: 1; margin-left: 8px;">
+            {{ player2|default:"Player 2" }}
+        </button>
     </div>
+
+    <style>
+        .player-name-link {
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .player-name-link:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+    
+    <script>
+        // Quick player navigation without scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            const player1Btn = document.getElementById('player1-nav-btn');
+            const player2Btn = document.getElementById('player2-nav-btn');
+            
+            if (player1Btn) {
+                player1Btn.addEventListener('click', function() {
+                    const target = document.querySelector('#player1-heading');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Highlight the player card briefly
+                        const playerCard = target.closest('.player-card');
+                        if (playerCard) {
+                            playerCard.style.boxShadow = '0 0 0 3px var(--primary)';
+                            setTimeout(() => {
+                                playerCard.style.boxShadow = '';
+                            }, 1000);
+                        }
+                    }
+                });
+            }
+            
+            if (player2Btn) {
+                player2Btn.addEventListener('click', function() {
+                    const target = document.querySelector('#player2-heading');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Highlight the player card briefly
+                        const playerCard = target.closest('.player-card');
+                        if (playerCard) {
+                            playerCard.style.boxShadow = '0 0 0 3px var(--primary)';
+                            setTimeout(() => {
+                                playerCard.style.boxShadow = '';
+                            }, 1000);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
