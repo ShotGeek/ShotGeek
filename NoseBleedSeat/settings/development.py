@@ -45,12 +45,4 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
-# WhiteNoise dev configuration: auto-refresh and (optionally) no-cache
-WHITENOISE_AUTOREFRESH = True
-WHITENOISE_MAX_AGE = 0
-
-# Use manifest storage so URLs include a hash (fingerprint). This provides
-# reliable cache-busting in the browser when static files change.
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
