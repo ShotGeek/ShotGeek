@@ -11,3 +11,10 @@ Here are the amazing individuals who have contributed to this project:
 - [Abhishek Saikia](https://github.com/KingrogKDR) 🏀
 - [Lidya K Tilahun](https://github.com/LideviK) 🏀
 - [Louis Oduor](https://github.com/louisoduor) 🏀
+- [Salim](https://github.com/theShinigami) 🏀
+- [Tim Schilling](https://github.com/tim-schilling) 🏀
+- [Vianney Kimuri](https://github.com/KimVianney) 🏀
+- [Ngazetungue Muheue](https://github.com/Ngazetungue) 🏀
+- [Chris Achinga](https://github.com/achingachris)🏀
+- [Julius Boakye](https://github.com/Darkbeast-glitch)🏀
+

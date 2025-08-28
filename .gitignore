@@ -55,6 +55,8 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+# Static files
+staticfiles/
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
@@ -68,8 +70,5 @@ ENV/
 env.bak/
 venv.bak/
 
-
-.env
-
-# Node.js dependencies
-node_modules/
+# ignoring Pycharm config files
+.idea/

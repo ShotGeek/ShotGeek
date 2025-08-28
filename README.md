@@ -58,8 +58,8 @@ The Docker Compose setup includes live reloading, so changes to your code will a
    ```
 2. Create and activate a virtual environment:
    ```sh
-   python3.10 -m venv myenv
-   source myenv/bin/activate  # On Windows use `venv\Scripts\activate`
+   python3.10 -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 3. Install dependencies:
    ```sh
