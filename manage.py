@@ -13,7 +13,7 @@ def main():
     if 'DEVELOPMENT' in os.environ:
         print("Development Environment Detected! Loading environment variables from .env file")
 
-    settings_module = 'NoseBleedSeat.settings.development' if 'DEVELOPMENT' in os.environ else 'NoseBleedSeat.settings.production'
+    settings_module = 'core.settings.development' if 'DEVELOPMENT' in os.environ else 'core.settings.production'
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
     try:
