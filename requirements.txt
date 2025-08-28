@@ -11,8 +11,8 @@ bidict==0.23.1
 certifi==2025.7.14
 charset-normalizer==3.4.2
 click==8.2.1
-dj-database-url==3.0.1
 crispy-bootstrap5==2025.6
+dj-database-url==3.0.1
 Django==5.2.4
 django-crispy-forms==2.4
 django-on-heroku==1.1.2
