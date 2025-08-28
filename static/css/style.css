@@ -372,6 +372,13 @@ a:hover {
     z-index: 9999;
 }
 
+/* hide compare bar on desktop */
+@media (min-width: 768px) {
+    .compare-bar {
+        display: none !important;
+    }
+}
+
 .compare-bar button {
     min-height: 48px;
     border-radius: 10px;

@@ -25,16 +25,9 @@ else:
         }
     }
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
+# In development, use WhiteNoise but with no caching and auto-refresh,
+# so static changes are reflected immediately. We keep WhiteNoise entries
+# from base INSTALLED_APPS and MIDDLEWARE unchanged.
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -51,5 +44,13 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = [
     STATIC_DIR,
 ]
+
+# WhiteNoise dev configuration: auto-refresh and (optionally) no-cache
+WHITENOISE_AUTOREFRESH = True
+WHITENOISE_MAX_AGE = 0
+
+# Use manifest storage so URLs include a hash (fingerprint). This provides
+# reliable cache-busting in the browser when static files change.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
