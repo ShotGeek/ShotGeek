@@ -34,22 +34,6 @@ Ensure you have the following installed on your system:
 - Django
 - PostgreSQL
 
-### Alternative: Docker Compose Setup
-For setup without installing dependencies locally, you can use Docker Compose:
-
-1. Install Docker and Docker Compose on your system
-2. Run the application:
-   ```sh
-   docker compose up --build
-   ```
-3. In a new terminal, run migrations:
-   ```sh
-   docker compose exec web python manage.py migrate
-   ```
-4. Open your browser and visit: `http://127.0.0.1:8000/`
-
-The Docker Compose setup includes live reloading, so changes to your code will automatically refresh the application.
-
 ### Installation
 1. Clone the repository:
    ```sh
