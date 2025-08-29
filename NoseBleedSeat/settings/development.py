@@ -4,23 +4,30 @@ ALLOWED_HOSTS = ['*']
 
 DEBUG=True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
+# Use PostgreSQL when in Docker environment, otherwise use SQLite
+import os
+if os.environ.get('DOCKER_ENV'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'shotgeek',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'db',
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / "db.sqlite3",
+        }
+    }
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
+# In development, use WhiteNoise but with no caching and auto-refresh,
+# so static changes are reflected immediately. We keep WhiteNoise entries
+# from base INSTALLED_APPS and MIDDLEWARE unchanged.
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

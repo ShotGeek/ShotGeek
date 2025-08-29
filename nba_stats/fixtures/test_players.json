@@ -1,0 +1,66 @@
+[
+  {
+    "model": "nba_stats.playerheadshot",
+    "pk": 2544,
+    "fields": {
+      "player_name": "LeBron James",
+      "player_image_url": "https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png",
+      "team_id": 1610612747,
+      "background_colour": "#f9a01b"
+    }
+  },
+  {
+    "model": "nba_stats.playerbio",
+    "pk": 2544,
+    "fields": {
+      "player_name": "LeBron James",
+      "school": "St. Vincent-St. Mary HS (OH)",
+      "country": "USA",
+      "height": "6-9",
+      "weight": 250,
+      "year": 2003,
+      "number": 23,
+      "position": "F",
+      "team_id": 1610612747,
+      "team_name": "Lakers",
+      "status": "Active",
+      "PTS": 25.0,
+      "REB": 7.0,
+      "AST": 7.0,
+      "BLK": 1.0,
+      "STL": 1.0
+    }
+  },
+  {
+    "model": "nba_stats.playerheadshot",
+    "pk": 893,
+    "fields": {
+      "player_name": "Michael Jordan",
+      "player_image_url": "https://cdn.nba.com/headshots/nba/latest/1040x760/893.png",
+      "team_id": 1610612741,
+      "background_colour": "#ce1141"
+    }
+  },
+  {
+    "model": "nba_stats.playerbio",
+    "pk": 893,
+    "fields": {
+      "player_name": "Michael Jordan",
+      "school": "North Carolina",
+      "country": "USA",
+      "height": "6-6",
+      "weight": 198,
+      "year": 1984,
+      "number": 23,
+      "position": "G",
+      "team_id": 1610612741,
+      "team_name": "Bulls",
+      "status": "Retired",
+      "PTS": 30.1,
+      "REB": 6.2,
+      "AST": 5.3,
+      "BLK": 0.8,
+      "STL": 2.3
+    }
+  }
+]
