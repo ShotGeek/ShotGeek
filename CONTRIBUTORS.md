@@ -17,4 +17,5 @@ Here are the amazing individuals who have contributed to this project:
 - [Ngazetungue Muheue](https://github.com/Ngazetungue) 🏀
 - [Chris Achinga](https://github.com/achingachris)🏀
 - [Julius Boakye](https://github.com/Darkbeast-glitch)🏀
+- [Raphaël Titsworth-Morin](https://github.com/raphaeltm)🏀
 
