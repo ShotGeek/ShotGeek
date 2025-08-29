@@ -1,20 +1,17 @@
-from nba_api.stats.static import teams, players
-from nba_api.stats.endpoints import leaguestandings, playerawards, commonplayerinfo, leagueleaders
-import os
-import requests
+from nba_api.stats.static import players
+from nba_api.stats.endpoints import playerawards, commonplayerinfo, leagueleaders
 from nba_stats.models import *
 from nba_stats.functions import *
+from .constants import WORDS
+from django.conf import settings
+import random, time
 
-# Proxy configuration
-SMARTPROXY_URL = os.getenv('SMARTPROXY_URL')
-SMARTPROXY_USERNAME = os.getenv('SMARTPROXY_USERNAME')
-SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
 
 
 def create_proxy_url():
     """Helper function to create the proxy URL."""
-    if SMARTPROXY_USERNAME and SMARTPROXY_PASSWORD:
-        proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    if settings.SMARTPROXY_USERNAME and settings.SMARTPROXY_PASSWORD:
+        proxy_url = f"http://{settings.SMARTPROXY_USERNAME}:{settings.SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
         return proxy_url
     else:
         return None
@@ -92,7 +89,6 @@ def fetch_player_data(player_name, player_id=None):
 
     return player_headshot, player_bio, player_id
 
-
 def search_team_by_name(search_term, eastern_teams, western_teams):
     """Helper function to search for a team by name in both conferences."""
     for team in eastern_teams:
@@ -104,7 +100,6 @@ def search_team_by_name(search_term, eastern_teams, western_teams):
             return team.team_id
 
     return None
-
 
 def get_player_awards(player_name, player_id):
     awards_data = CareerAwards.objects.filter(player_id=player_id).first()
@@ -121,7 +116,6 @@ def get_player_awards(player_name, player_id):
         player_awards = awards_data.accomplishments
 
     return player_awards
-
 
 def get_league_leaders():
     # Construct the proxy URL
@@ -241,7 +235,6 @@ def get_league_leaders():
 
     return stat_leaders
 
-
 def get_per_game_stats(player_id):
         
     # Construct the proxy URL
@@ -298,7 +291,6 @@ def get_per_game_stats(player_id):
     stats.append(years)
 
     return stats
-
 
 def get_player_bio(player_id):
     # Construct the proxy URL
@@ -437,3 +429,9 @@ def get_accolades(player_id):
             count = 1
 
     return accolades_history
+
+
+random.seed(time.time())
+
+def get_word_of_the_day() -> str:
+    return random.choice(WORDS)

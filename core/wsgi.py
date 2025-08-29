@@ -11,7 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-settings_module = 'NoseBleedSeat.settings.development' if 'DEVELOPMENT' in os.environ else 'NoseBleedSeat.settings.production'
+settings_module = 'core.settings.development' if 'DEVELOPMENT' in os.environ else 'core.settings.production'
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
 
