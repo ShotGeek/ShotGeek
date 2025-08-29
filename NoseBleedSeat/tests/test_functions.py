@@ -1,5 +1,15 @@
 import pytest
-from NoseBleedSeat.functions import *
+from NoseBleedSeat.functions import (
+    get_accolades,
+    get_word_of_the_day,
+    fetch_player_data,
+    get_player_awards,
+    get_league_leaders,
+    get_per_game_stats,
+    search_team_by_name,
+    get_player_bio,
+
+)
 from nba_teams.models import EasternConferenceTeams, WesternConferenceTeams
 from django.core.management import call_command
 
@@ -99,7 +109,7 @@ class TestLeagueLeaders:
     @pytest.mark.django_db
     @pytest.mark.skip(reason="function not used!")
     def test_get_league_leaders(self):
-        league_leaders = get_league_leaders()
+        get_league_leaders()
 
 
 class TestPerGameStats:

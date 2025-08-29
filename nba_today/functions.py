@@ -1,14 +1,10 @@
 from nba_api.live.nba.endpoints import scoreboard
-import pprint
-import requests
-from bs4 import BeautifulSoup
-from nba_teams.models import *
+from nba_teams.models import EasternConferenceTeams, WesternConferenceTeams
 
 
 # get today's game scores
 def get_scores():
     # Today's Score Board
-    games = scoreboard.ScoreBoard()
     results = scoreboard.ScoreBoard().games.get_dict()
 
     return results

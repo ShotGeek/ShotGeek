@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
 from nba_stats.forms import PlayerSearchForm
-from .functions import *
+from .functions import get_team, get_team_history, retired_players, get_team_rankings, get_team_roster
 import time
-from django.utils import timezone
 
 
 def team_page(request, team_id):

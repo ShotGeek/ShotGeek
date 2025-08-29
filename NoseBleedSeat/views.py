@@ -1,11 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from nba_stats.forms import PlayerSearchForm
-from nba_stats.models import *
-from .functions import *
-from nba_stats.functions import *
+from nba_stats.models import PlayerHeadShot, LeagueLeaders
+from .functions import (
+    get_word_of_the_day,
+    fetch_player_data,
+    search_team_by_name,
+    get_player_awards,
+    leagueleaders,
+)
+from nba_stats.functions import get_player_image, create_proxy_url
 from .forms import PlayerOneForm, PlayerTwoForm
-from nba_teams.models import *
+from nba_teams.models import WesternConferenceTeams, EasternConferenceTeams
 from django.utils import timezone
 
 
@@ -37,7 +43,7 @@ def home(request):
         if not player1_headshot or not player1_bio or not player1_id:
             raise ValueError("Player not found")
 
-    except ValueError as e:
+    except ValueError:
         request.session.pop('player1', None)
         messages.error(request, f"Could not find player '{player1}'. Please check your spelling and try again.")
         return redirect('home')
@@ -50,7 +56,7 @@ def home(request):
         if not player2_headshot or not player2_bio or not player2_id:
             raise ValueError("Player not found")
 
-    except ValueError as e:
+    except ValueError:
         request.session.pop('player2', None)
         messages.error(request, f"Could not find player '{player2}'. Please check your spelling and try again.")
         return redirect('home')
@@ -107,7 +113,7 @@ def home(request):
                 request.session['player2'] = player2_form.cleaned_data['player2_name'].title()
                 return redirect('home')
 
-        except ValueError as e:
+        except ValueError:
             context = {
                 'message': "Player not found. Please check the spelling and try again."
             }
