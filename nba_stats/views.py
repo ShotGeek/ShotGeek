@@ -3,19 +3,21 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from .forms import PlayerSearchForm, StatsDropdownForm, PlayerCompareForm, StatsCompForm, PlayerGraphForm
 from NoseBleedSeat.functions import (
-    player_career_numbers,
     get_player_bio, 
-    get_player_graph, 
     fetch_player_data, 
     get_player_image,
+    get_accolades,
+)
+from nba_stats.models import PlayerBio, CareerAwards
+from .functions import (
+    get_player_graph,
     player_regular_season,
     player_post_season,
     rankings_regular_season,
     rankings_post_season,
     get_graph,
-    get_accolades,
+    player_career_numbers
 )
-from nba_stats.models import PlayerBio, CareerAwards
 from nba_api.stats.static import players
 
 
