@@ -128,6 +128,7 @@
         // For htmx requests (if using htmx for AJAX calls)
         document.addEventListener('htmx:configRequest', showLoader);
         document.addEventListener('htmx:afterOnLoad', function() {
+            console.log('@@ htmx:afterOnLoad');
             document.getElementById('loader').style.display = 'none';
         });
 </script>

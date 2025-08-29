@@ -540,3 +540,16 @@ a:hover {
     max-width: 80%; /* Adjust image size if needed */
     height: auto;
 }
+
+/* Ensure the comparison chart scales responsively */
+#ComparisonChart {
+    width: 100% !important;
+    display: block;
+}
+
+/* On small screens (≤576px), make the chart 70% of the viewport height */
+@media (max-width: 576px) {
+    #ComparisonChart {
+        height: 70vh !important;
+    }
+}
