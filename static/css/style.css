@@ -60,6 +60,13 @@ body {
     color: var(--text);
 }
 
+/* Ensure content isn't hidden behind sticky bottom bars on mobile */
+@media (max-width: 576px) {
+    body {
+        padding-bottom: 96px;
+    }
+}
+
 a {
     text-decoration: none;
     font-weight: bold;
@@ -69,6 +76,13 @@ a {
 a:hover {
     color: var(--primary);
     opacity: .85;
+}
+
+/* Smaller bottom padding on desktop where sticky bar is hidden */
+@media (min-width: 768px) {
+    body {
+        padding-bottom: 24px;
+    }
 }
 
 .navbar-nav .nav-link {

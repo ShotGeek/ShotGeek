@@ -10,12 +10,18 @@ Home
         (<article role="region">) and a sticky compare bar.  Markup uses
         semantic elements and accessible labels so the layout remains usable
         on both mobile and desktop. -->
-
     <div class="container my-4">
         <header class="text-center mb-4">
-            <strong class="d-block">ShotGeek</strong>
-            <h1 class="h2">Head-To-Head Stats</h1>
-            <p class="text-muted mb-0">Compare NBA players quickly on your phone.</p>
+            <h1 class="h2"><strong>Head-To-Head Stats</strong></h1>
+            <p class="lead">- {{ word_of_the_day }} -</p>
+            <!-- Desktop-only Compare Players button under the cards -->
+            <div class="d-none d-md-block">
+                <div class="text-center my-3">
+                    <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}">
+                        <button class="btn btn-primary btn-lg" {% if not player1 or not player2 %}disabled{% endif %}>Compare Players</button>
+                    </a>
+                </div>
+            </div>
         </header>
 
         {% if messages %}
@@ -72,7 +78,6 @@ Home
                             hx-trigger="click">
                             Show Career Awards
                         </button>
-                        <button class="btn btn-tertiary" type="button">Share</button>
                     </footer>
                 </article>
             </div>
@@ -122,7 +127,6 @@ Home
                             hx-trigger="click">
                             Show Career Awards
                         </button>
-                        <button class="btn btn-tertiary" type="button">Share</button>
                     </footer>
                 </article>
             </div>
