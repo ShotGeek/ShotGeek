@@ -1,11 +1,11 @@
-from .base import *
+from .base import * # noqa: F403
+import os
 
 ALLOWED_HOSTS = ['*']
 
 DEBUG=True
 
 # Use PostgreSQL when in Docker environment, otherwise use SQLite
-import os
 if os.environ.get('DOCKER_ENV'):
     DATABASES = {
         'default': {
@@ -21,7 +21,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / "db.sqlite3",
+            'NAME': BASE_DIR / "db.sqlite3", # noqa: F405
         }
     }
 
@@ -41,9 +41,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_DIR = os.path.join(BASE_DIR, 'static') # noqa: F405
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # noqa: F405
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
@@ -52,4 +52,4 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # noqa: F405

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import PlayerHeadShot, PlayerBio, CareerAwards, LeagueLeaders
 
 # Register your models here.
 admin.site.register(PlayerHeadShot)

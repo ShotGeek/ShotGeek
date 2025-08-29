@@ -1,4 +1,6 @@
-from .base import *
+from .base import * # noqa: F403
+import django_on_heroku # Configure Django App for Heroku.
+import os
 
 # Application definition
 
@@ -35,9 +37,9 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_DIR = os.path.join(BASE_DIR, 'static') # noqa: F405
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # noqa: F405
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
@@ -46,9 +48,7 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # noqa: F405
 
-# Configure Django App for Heroku.
-import django_on_heroku
 
 django_on_heroku.settings(locals())
