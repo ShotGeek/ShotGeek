@@ -4,7 +4,7 @@ from nba_stats.models import *
 from nba_stats.functions import *
 from .constants import WORDS
 from django.conf import settings
-import random
+import random, time
 
 
 
@@ -429,6 +429,9 @@ def get_accolades(player_id):
             count = 1
 
     return accolades_history
+
+
+random.seed(time.time())
 
 def get_word_of_the_day() -> str:
     return random.choice(WORDS)
