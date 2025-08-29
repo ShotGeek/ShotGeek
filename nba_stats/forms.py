@@ -97,6 +97,17 @@ class StatsDropdownForm(forms.Form):
 class StatsCompForm(forms.Form):
     option = forms.ChoiceField(choices=COMP_OPTIONS, label="", required=True, error_messages={'required':'Please select an option'})
 
+    def clean_option(self):
+        """
+        Ran into a when I accidentally submitted default without selecting a graph. 
+        Adding this should help.
+        """
+        value = self.cleaned_data.get('option')
+        # Prevent submitting the placeholder option
+        if isinstance(value, str) and value.strip().startswith('---'):
+            raise forms.ValidationError('Please select a stat to compare.')
+        return value
+
     # this method will allow me to get the selected option's readable value to use for the graph's title
     def get_graph_title(self, selected_option):
         for dict_value, reader_value in COMP_OPTIONS:
@@ -120,6 +131,20 @@ class PlayerCompareForm(forms.Form):
 class PlayerGraphForm(forms.Form):
     career_category = forms.ChoiceField(label='Career Category', choices=STAT_OPTIONS, required=True, error_messages={'required':'Please select a category'})
     stat_option = forms.ChoiceField(choices=GRAPH_OPTIONS, label="Stat Category", required=True, error_messages={'required':'Please select a stat option'})
+
+    def clean_stat_option(self):
+        value = self.cleaned_data.get('stat_option')
+        # Prevent submitting the placeholder option
+        if isinstance(value, str) and value.strip().startswith('---'):
+            raise forms.ValidationError('Please select a stat.')
+        return value
+    
+    def clean_career_category(self):
+        value = self.cleaned_data.get('career_category')
+        # Prevent submitting the placeholder option
+        if isinstance(value, str) and value.strip().startswith('---'):
+            raise forms.ValidationError('Please select a career category.')
+        return value
 
     # this method will allow me to get the selected option's readable value to use for the graph's title
     def get_graph_title(self, selected_option):

@@ -67,6 +67,7 @@
       },
       options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
               title: {
                   display: true,
@@ -90,7 +91,9 @@
       }
   });
 </script>
-       <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}" class="btn btn-primary">Back To {{ player_full_name }} Page</a>
-        </div>
+        <!-- Back to Player Details Button -->
+       <div class="text-center mt-4 mb-4">
+            <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}" class="btn btn-primary">Back To {{ player_full_name }} Page</a>
+       </div>
 
 {% endblock %}
