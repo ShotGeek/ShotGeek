@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<!--
-    Base template for ShotGeek.
-    This file defines the core page structure including navigation, footer,
-    and all shared assets.  Responsive behavior is handled via Bootstrap and
-    custom rules in static/css/style.css, allowing the layout to scale from
-    mobile to desktop without modifying template markup.
--->
 <html>
 <head>
     <title>
@@ -14,25 +7,139 @@
         {% endblock %}
     </title>
     {% load static %}
-    {% load cache_bust %}
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="icon" sizes="80x80" href="{% static 'images/sg-fav.png' %}">
     <link rel="icon" sizes="16x16" href="{% static 'images/sg-fav.png' %}">
-    <link rel="stylesheet" href="{% static_bust 'css/style.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.2"></script> <!-- Add htmx -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Add chart.js -->
+
+        <style>
+        body {
+            font-family: "Courier New", Courier, monospace;
+        }
+
+          a {
+                text-decoration: none;  /* Removes the underline */
+                font-weight: bold;      /* Makes the text bold */
+                color: #f1543a;         /* Sets the color to #f1543a */
+  }
+
+                /* Style for all buttons */
+        button, .btn {
+            background-color: #f1543a;
+            color: white;
+        }
+
+        /* Optional: Hover effect for buttons */
+        button:hover, .btn:hover {
+            background-color: #d1432f;
+            color: white;
+        }
+
+        /* ===== Search Form Styles ===== */
+        .form-inline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 500px;
+        }
+    
+        .form-inline p {
+            margin: 0;
+            flex-grow: 1;
+            position: relative;
+        }
+    
+        .form-inline input {
+            width: 100%;
+            padding: 8px 15px 8px 35px; /* Combined padding declaration */
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            font-family: inherit; 
+        }
+    
+        .form-inline input:focus {
+            outline: none;
+            border-color: #f1543a;
+            box-shadow: 0 0 0 2px rgba(241, 84, 58, 0.2);
+            background-color: white;
+        }
+    
+        .form-inline .btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            height: 38px;
+            cursor: pointer; 
+        }
+    
+        .form-inline .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    
+        /* Search icon */
+        .form-inline p::before {
+            content: "🔍";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+            pointer-events: none; /* Prevents icon from blocking input */
+        }
+    
+        /* ===== Responsive Styles ===== */
+        @media (max-width: 576px) {
+            .form-inline {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .form-inline .btn {
+                width: 100%;
+            }
+        }
+               /* Full-page loader overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none; /* Hidden by default */
+        }
+
+        /* Spinner centered inside the overlay */
+        .loader-overlay .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+    </style>
 </head>
 <body>
 <!-- Loader Section (Place in base.html) -->
-<div id="loader" class="loader-overlay">
+<div id="loader" style="display:none; position:fixed; z-index:9999; top:50%; left:50%; transform:translate(-50%, -50%);">
     <img src="{% static 'images/ShotGeek-loader.gif' %}" alt="Loading..." />
 </div>
 <div class="container">
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
-<a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'images/31.png' %}" alt="Logo" class="img-fluid navbar-logo">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'images/31.png' %}" alt="Logo" height="250">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,10 +149,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}"><b>HOME</b></a>
+                    <a style="color: #b4513e;" class="nav-link" href="{% url 'home' %}"><b>HOME</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}"><b>ABOUT</b></a>
+                    <a style="color: #b4513e;" class="nav-link" href="{% url 'about' %}"><b>ABOUT</b></a>
                 </li>
             </ul>
 
