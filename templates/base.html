@@ -55,7 +55,7 @@
             <form method="post" class="form-inline my-2 my-lg-0" action="{% url 'home' %}">
                 {% csrf_token %}
                 {{ player_form.as_p }}
-                <button class="btn btn-outline-success my-2 my-sm-0 text-center" id="loadButton" type="submit">Search</button>
+                <button class="btn btn-secondary my-2 my-sm-0 text-center" id="loadButton" type="submit">Search</button>
             </form>
         </div>
 </nav>
