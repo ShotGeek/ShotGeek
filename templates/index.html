@@ -134,13 +134,13 @@ Home
     </div>
 
     <div class="compare-bar d-flex justify-content-between align-items-center">
-        <button class="btn btn-secondary player-nav-btn" id="player1-nav-btn" data-target="#player1-heading" style="flex: 1; margin-right: 8px;">
+        <button class="btn btn-secondary player-nav-btn noloader" id="player1-nav-btn" data-target="#player1-heading" style="flex: 1; margin-right: 8px;">
             {{ player1|default:"Player 1" }}
         </button>
         <a href="{% url 'nba_stats:compare_profiles' player1_full_name=player1 player1_id=player1_id player2_full_name=player2 player2_id=player2_id %}" style="flex: 2;">
             <button class="btn btn-primary" {% if not player1 or not player2 %}disabled{% endif %}>Compare Players</button>
         </a>
-        <button class="btn btn-secondary player-nav-btn" id="player2-nav-btn" data-target="#player2-heading" style="flex: 1; margin-left: 8px;">
+        <button class="btn btn-secondary player-nav-btn noloader" id="player2-nav-btn" data-target="#player2-heading" style="flex: 1; margin-left: 8px;">
             {{ player2|default:"Player 2" }}
         </button>
     </div>
