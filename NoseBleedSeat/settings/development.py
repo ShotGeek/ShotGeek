@@ -25,9 +25,16 @@ else:
         }
     }
 
-# In development, use WhiteNoise but with no caching and auto-refresh,
-# so static changes are reflected immediately. We keep WhiteNoise entries
-# from base INSTALLED_APPS and MIDDLEWARE unchanged.
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
