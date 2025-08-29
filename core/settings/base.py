@@ -36,7 +36,7 @@ INSTALLED_APPS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
-ROOT_URLCONF = "NoseBleedSeat.urls"
+ROOT_URLCONF = "core.urls"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -65,7 +65,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "NoseBleedSeat.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.application"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -97,3 +97,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Proxy configuration
+SMARTPROXY_URL = os.getenv('SMARTPROXY_URL')
+SMARTPROXY_USERNAME = os.getenv('SMARTPROXY_USERNAME')
+SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
