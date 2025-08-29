@@ -184,7 +184,7 @@ def get_graph(player1_id, player1_name, player2_id, player2_name, stat_category,
             except KeyError:
                 player1_numbers.append(0)  # Stat missing in this season
 
-        player2_numbers = [player2_stats[i][stat_category] for i in range(seasons)] # fill longer player's stats
+        player2_numbers = [player2_stats[i].get(stat_category, 0) for i in range(seasons)] # fill longer player's stats
     
     elif len(player2_stats) < len(player1_stats):
         seasons = len(player1_stats)
@@ -197,13 +197,13 @@ def get_graph(player1_id, player1_name, player2_id, player2_name, stat_category,
             except KeyError:
                 player2_numbers.append(0)
 
-        player1_numbers = [player1_stats[i][stat_category] for i in range(seasons)]
+        player1_numbers = [player1_stats[i].get(stat_category, 0) for i in range(seasons)]
 
     #
     else:
         seasons = len(player1_stats)
-        player1_numbers = [player1_stats[i][stat_category] for i in range(seasons)]
-        player2_numbers = [player2_stats[i][stat_category] for i in range(seasons)]
+        player1_numbers = [player1_stats[i].get(stat_category, 0) for i in range(seasons)]
+        player2_numbers = [player2_stats[i].get(stat_category, 0) for i in range(seasons)]
 
     # Prepare data for Chart.js
     labels = [f"Season {i+1}" for i in range(seasons)]
