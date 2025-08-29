@@ -33,8 +33,9 @@
 </div>
 <div class="container">
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
-<a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'images/31.png' %}" alt="Logo" class="img-fluid navbar-logo">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'images/31.png' %}" alt="Logo" class="img-fluid navbar-logo d-none d-sm-block">
+            <img src="{% static 'images/logo-tight.png' %}" alt="Logo" class="img-fluid navbar-logo d-xs-block d-sm-none">
         </a>
         <button class="navbar-toggler noloader" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
