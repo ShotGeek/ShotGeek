@@ -62,7 +62,7 @@ def test_about_view(client):
 
 @pytest.mark.django_db
 def test_show_career_awards_player1(player_name, player_id, client):
-    response = client.get(f"/show-career-awards-player0/{player_name}/{player_id}")
+    response = client.get(f"/show-career-awards-player1/{player_name}/{player_id}")
 
     assert response.status_code == 200
     assert "Career Awards" in response.content.decode()
@@ -70,7 +70,7 @@ def test_show_career_awards_player1(player_name, player_id, client):
 
 @pytest.mark.django_db
 def test_show_career_awards_player2(player_name, player_id, client):
-    response = client.get(f"/show-career-awards-player1/{player_name}/{player_id}")
+    response = client.get(f"/show-career-awards-player2/{player_name}/{player_id}")
 
     assert response.status_code == 200
     assert "Career Awards" in response.content.decode()

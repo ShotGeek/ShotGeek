@@ -1,9 +1,7 @@
 from nba_stats.models import PlayerHeadShot
-from nba_today.functions import get_team_image
 from nba_stats.functions import get_player_image
-from nba_api.stats.endpoints import teamdetails, commonteamroster, teaminfocommon, leaguegamefinder
-from nba_teams.models import *
-import requests
+from nba_api.stats.endpoints import teamdetails, commonteamroster, teaminfocommon
+from nba_teams.models import EasternConferenceTeams, WesternConferenceTeams, RetiredPlayers
 import os
 
 # Proxy configuration

@@ -1,10 +1,16 @@
 from nba_api.stats.static import players
-from nba_api.stats.endpoints import playerawards, commonplayerinfo, leagueleaders
-from nba_stats.models import *
-from nba_stats.functions import *
+from nba_api.stats.endpoints import (
+    playerawards, 
+    commonplayerinfo, 
+    leagueleaders, 
+    playercareerstats,
+)
+from nba_stats.models import PlayerHeadShot, PlayerBio, CareerAwards, LeagueLeaders
+from nba_stats.functions import get_player_image
 from .constants import WORDS
 from django.conf import settings
-import random, time
+import random
+import time
 
 
 

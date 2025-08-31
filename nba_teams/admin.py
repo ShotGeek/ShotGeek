@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import EasternConferenceTeams, WesternConferenceTeams, RetiredPlayers
 
 # Register your models here.
 admin.site.register(EasternConferenceTeams)
