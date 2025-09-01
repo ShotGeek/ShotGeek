@@ -82,7 +82,9 @@ Regular Season Rankings
             {% for season_data in player_stats %}
             <tr>
                     <td>{{ season_data.SEASON_ID }}</td>
-                    <td>{{ season_data.TEAM_ABBREVIATION }}</td>
+                    <td>
+                        <img src="{{ season_data.TEAM_ABBREVIATION|team_logo }}" alt="{{ season_data.TEAM_ABBREVIATION }} logo" />
+                    </td>
                      <td>{{ season_data.RANK_PTS|intcomma }}</td>
                     <td>{{ season_data.RANK_AST|intcomma }}</td>
                     <td>{{ season_data.RANK_BLK|intcomma }}</td>
