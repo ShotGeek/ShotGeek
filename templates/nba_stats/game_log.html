@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}
+{{ player_full_name }} Game Logs {{ season }}
+{% endblock %}
+
+{% block content %}
+ <div class="container mt-4">
+    <!-- Player Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <!-- Player Image -->
+                <div class="col-md-4 text-center">
+                    <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}">
+                        <img src="{{ player_headshot.0 }}" style="background-color: {{ player_headshot.1 }}" alt="Player Image" class="rounded-circle img-fluid mt-3  w-75">
+                    </a>
+                </div>
+
+                <!-- Player Bio -->
+                <div class="col-md-4 d-flex flex-column justify-content-center"  id="player-bio">
+                    <h1 class="card-title" style="color: #b4513e;">{{ player_full_name }} #{{ player_bio.number }}</h1>
+                    <h6><b>School:</b> {{ player_bio.school }} | <b>Country:</b> {{ player_bio.country }}</h6>
+                    <h6><b>Height:</b> {{ player_bio.height }} | <b>Weight:</b> {{ player_bio.weight }}</h6>
+                    <h6><b>Year:</b> {{ player_bio.year }}</h6>
+                    <h6><b>Position:</b> {{ player_bio.position }} | <b>Status:</b> {{ player_bio.status }}</h6>
+                    <h6><b>PPG:</b> {{ player_bio.PTS }} | <b>RPG:</b> {{ player_bio.REB }} | <b>APG:</b> {{ player_bio.AST }} <b>STLPG:</b> {{ player_bio.STL }} <b>BLKPG:</b> {{ player_bio.BLK }}</h6>
+                </div>
+
+                <!-- Career Awards -->
+                <div class="col-md-4 d-flex flex-column justify-content-center" id="player-awards">
+                    <h4>Career Awards</h4>
+                    <hr>
+                    <button class="btn btn-outline-success mt-3"
+                            hx-get="{% url 'nba_stats:update_player_awards' player_id=player_id player_name=player_full_name %}"
+                            hx-target="#player-awards"
+                            hx-swap="outerHTML"
+                            hx-trigger="click">
+                        Show Career Awards
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <div class="text-muted">{{ player_full_name }}</div>
+            <div class="text-muted">#{{ player_bio.number }}</div>
+        </div>
+    </div>
+    <!-- Game Log Table Section -->
+    <div class="table-responsive">
+        <h2 class="mt-4">{{ player_full_name }} Game Logs for {{ season }} {{ season_type }}</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Matchup</th>
+                    <th>Points</th>
+                    <th>Rebounds</th>
+                    <th>Assists</th>
+                    <th>Steals</th>
+                    <th>Blocks</th>
+                    <th>Minutes</th>
+                    <th>FG Made</th>
+                    <th>FG Attempted</th>
+                    <th>FG Percentage</th>
+                    <th>3P Made</th>
+                    <th>3P Attempted</th>
+                    <th>3P%</th>
+                    <th>FT Made</th>
+                    <th>FT Attempted</th>
+                    <th>FT%</th>
+                    <th>Offensive Rebs</th>
+                    <th>Defensive Rebs</th>
+                    <th>Plus/Minus</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in game_log %}
+                <tr>
+                    <td>{{ game.GAME_DATE }}</td>
+                    <td>{{ game.MATCHUP|matchup_logos|safe }}</td>
+                    <td>{{ game.PTS|intcomma }}</td>
+                    <td>{{ game.REB|intcomma }}</td>
+                    <td>{{ game.AST|intcomma }}</td>
+                    <td>{{ game.STL|intcomma }}</td>
+                    <td>{{ game.BLK|intcomma }}</td>
+                    <td>{{ game.MIN|intcomma }}</td>
+                    <td>{{ game.FGM|intcomma }}</td>
+                    <td>{{ game.FGA|intcomma }}</td>
+                    <td>{{ game.FG_PCT|percentage }}</td>
+                    <td>{{ game.FG3M|intcomma }}</td>
+                    <td>{{ game.FG3A|intcomma }}</td>
+                    <td>{{ game.FG3_PCT|percentage }}</td>
+                    <td>{{ game.FTM|intcomma }}</td>
+                    <td>{{ game.FTA|intcomma }}</td>
+                    <td>{{ game.FT_PCT|percentage }}</td>
+                    <td>{{ game.OREB|intcomma }}</td>
+                    <td>{{ game.DREB|intcomma }}</td>
+                    <td>{{ game.PLUS_MINUS|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-3">
+        <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}" class="btn btn-primary">Back To {{ player_full_name }} Page</a>
+    </div>
+{% endblock %}

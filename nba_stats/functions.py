@@ -1,7 +1,16 @@
-from nba_api.stats.endpoints import playercareerstats, commonplayerinfo
+import base64
+import io
+from nba_api.stats.endpoints import playercareerstats, commonplayerinfo, PlayerGameLog, shotchartdetail
 import requests
 from bs4 import BeautifulSoup
 import os
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from matplotlib import cm
+from matplotlib.patches import Circle, Rectangle, Arc
 
 # Proxy configuration
 SMARTPROXY_URL = os.getenv('SMARTPROXY_URL')
@@ -408,3 +417,187 @@ def get_years_played(player_stats):
         if year not in years_played:
             years_played.append(year)
     return years_played
+
+def get_game_log(player_id, season, season_type):
+      # Construct the proxy URL
+    proxy_url = create_proxy_url()
+
+    # production with proxy
+    if proxy_url:
+        game_log = PlayerGameLog(player_id=player_id, season=season, season_type_all_star=season_type, proxy=proxy_url)
+        game_data = game_log.get_data_frames()[0]  # Get the first DataFrame from the list
+    else:
+        game_log = PlayerGameLog(player_id=player_id, season=season, season_type_all_star=season_type)
+        game_data = game_log.get_data_frames()[0]
+
+    # select and rename relevant columns
+    game_data = game_data[['GAME_DATE', 'MATCHUP', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'MIN', 'FGM', 'FGA', 'FG_PCT', 'FG3M', 'FG3A', 'FG3_PCT', 'FTM', 'FTA', 'FT_PCT', 'OREB', 'DREB', 'PLUS_MINUS']]
+    #game_data.columns = ['Date', 'Matchup', 'Points', 'Rebounds', 'Assists', 'Steals', 'Blocks', 'Minutes', 'FG Made', 'FG Attempted', 'FG Percentage', '3P Made', '3P Attempted', '3P%', 'FT Made', 'FT Attempted', 'FT%', 'Offensive Rebs', 'Defensive Rebs', 'Plus/Minus']
+
+    return game_data
+
+def get_shot_chart(player_id, team_id, season, season_type, context_measure):
+    # Construct the proxy URL
+    proxy_url = create_proxy_url()
+
+    # production with proxy
+    if proxy_url:
+        shot_chart_list = shotchartdetail.ShotChartDetail(
+            team_id=team_id,
+            player_id=player_id,
+            season_type_all_star=season_type,
+            season_nullable=season,
+            context_measure_simple=context_measure,
+            proxy=proxy_url
+        )
+        shot_chart = shot_chart_list.get_data_frames()  
+    else:
+        shot_chart_list = shotchartdetail.ShotChartDetail(
+            team_id=team_id,
+            player_id=player_id,
+            season_type_all_star=season_type,
+            season_nullable=season,
+            context_measure_simple=context_measure
+        )
+        shot_chart = shot_chart_list.get_data_frames()
+
+    return shot_chart[0], shot_chart[1]  # Return the first two DataFrames (shot data and league averages)
+
+
+# draw court function
+def draw_court(ax=None, color="black", lw=1, outer_lines=False):
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(12, 11))
+
+    # Basketball Hoop
+    hoop = Circle((0,0), radius=7.5, linewidth=lw, color=color, fill=False)
+
+    # Backboard
+    backboard = Rectangle((-30, -12.5), 60, 0, linewidth=lw, color=color)
+
+    # The paint
+    # outer box
+    outer_box = Rectangle((-80, -47.5), 160, 190, linewidth=lw, color=color, fill=False)
+    # inner box
+    inner_box = Rectangle((-60, -47.5), 120, 190, linewidth=lw, color=color, fill=False)
+
+    # Free Throw Top Arc
+    top_free_throw = Arc((0, 142.5), 120, 120, theta1=0, theta2=180, linewidth=lw, color=color, fill=False)
+
+    # Free Bottom Top Arc
+    bottom_free_throw = Arc((0, 142.5), 120, 120, theta1=180, theta2=0, linewidth=lw, color=color)
+
+    # Restricted Zone
+    restricted = Arc((0, 0), 80, 80, theta1=0, theta2=180, linewidth=lw, color=color)
+
+    # Three Point Line
+    corner_three_a = Rectangle((-220, -47.5), 0, 140, linewidth=lw, color=color)
+    corner_three_b = Rectangle((220, -47.5), 0, 140, linewidth=lw, color=color)
+    three_arc = Arc((0, 0), 475, 475, theta1=22, theta2=158, linewidth=lw, color=color)
+
+    # Center Court
+    center_outer_arc = Arc((0, 422.5), 120, 120, theta1=180, theta2=0, linewidth=lw, color=color)
+    center_inner_arc = Arc((0, 422.5), 40, 40, theta1=180, theta2=0, linewidth=lw, color=color)
+
+    # list of court shapes
+    court_elements = [hoop, backboard, outer_box, inner_box, top_free_throw, bottom_free_throw, restricted, corner_three_a, corner_three_b, three_arc, center_outer_arc, center_inner_arc]
+
+    #outer_lines=True
+    if outer_lines:
+        outer_lines = Rectangle((-250, -47.5), 500, 470, linewidth=lw, color=color, fill=False)
+        court_elements.append(outer_lines)
+
+    for element in court_elements:
+        ax.add_patch(element)
+
+def shot_chart(
+    data,
+    title="",
+    color="b",
+    xlim=(-250, 250),
+    ylim=(-47.5, 422.5),
+    line_color="black",
+    court_color="white",
+    court_lw=2,
+    outer_lines=False,
+    flip_court=False,
+    gridsize=None,
+    ax=None,
+    despine=False
+):
+    import matplotlib.patches as mpatches
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(12, 11))
+
+    # Set axes limits
+    if not flip_court:
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+    else:
+        ax.set_xlim(xlim[::-1])
+        ax.set_ylim(ylim[::-1])
+
+    ax.tick_params(bottom=False, left=False, labelbottom=False, labelleft=False)
+    #ax.set_title(title, fontsize=18)
+
+    # Draw the court
+    draw_court(ax, color=line_color, lw=court_lw, outer_lines=outer_lines)
+
+    # Separate by made or missed
+    x_missed = data[data['EVENT_TYPE'] == 'Missed Shot']['LOC_X']
+    y_missed = data[data['EVENT_TYPE'] == 'Missed Shot']['LOC_Y']
+
+    x_made = data[data['EVENT_TYPE'] == 'Made Shot']['LOC_X']
+    y_made = data[data['EVENT_TYPE'] == 'Made Shot']['LOC_Y']
+
+    # Plot shots with clearer distinction
+    ax.scatter(
+        x_missed, y_missed,
+        c='red',
+        marker='x',
+        s=250,
+        linewidths=3,
+        label="Missed Shot"
+    )
+    ax.scatter(
+        x_made, y_made,
+        facecolors='none',
+        edgecolors='green',
+        marker='o',
+        s=150,
+        linewidths=2,
+        label="Made Shot"
+    )
+
+    # Set spines
+    for spine in ax.spines:
+        ax.spines[spine].set_lw(court_lw)
+        ax.spines[spine].set_color(line_color)
+
+    if despine:
+        for spine in ["top", "bottom", "right", "left"]:
+            ax.spines[spine].set_visible(False)
+
+    # Add a legend (key)
+    ax.legend(loc="upper right", fontsize=12, frameon=True, facecolor="white")
+
+    return ax
+
+
+def render_plot_to_base64(fig=None, format="png"):
+    """
+    Save a Matplotlib figure to base64 so it can be embedded in templates.
+    If no figure is passed, will use the current active figure.
+    """
+    buf = io.BytesIO()
+    if fig is None:
+        plt.savefig(buf, format=format, bbox_inches="tight")
+        plt.close()
+    else:
+        fig.savefig(buf, format=format, bbox_inches="tight")
+        plt.close(fig)
+
+    buf.seek(0)
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
