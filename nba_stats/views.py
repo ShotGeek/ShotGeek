@@ -1,23 +1,11 @@
 import json
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from .forms import PlayerSearchForm, StatsDropdownForm, PlayerCompareForm, StatsCompForm, PlayerGraphForm
-from NoseBleedSeat.functions import (
-    get_player_bio, 
-    fetch_player_data, 
-    get_player_image,
-    get_accolades,
-)
+import pandas as pd
+from .forms import PlayerSearchForm, StatsDropdownForm, PlayerCompareForm, StatsCompForm, PlayerGraphForm, PlayerRegularGameLogForm, PlayerPlayoffsGameLogsForm, PlayerRegShotChartForm
+from NoseBleedSeat.functions import *
 from nba_stats.models import PlayerBio, CareerAwards
-from .functions import (
-    get_player_graph,
-    player_regular_season,
-    player_post_season,
-    rankings_regular_season,
-    rankings_post_season,
-    get_graph,
-    player_career_numbers
-)
+from .functions import *
 from nba_api.stats.static import players
 
 
@@ -43,6 +31,8 @@ def player_details(request, player_full_name, player_id):
     # Get player career stats
     career_stats = player_career_numbers(player_id)
     player_stats = career_stats['CareerTotalsRegularSeason']
+    player_stats_form = career_stats['SeasonTotalsRegularSeason']  # data for filling up regular season gamelog form
+    player_stats_playoffs = career_stats['SeasonTotalsPostSeason']  # data for filling up playoffs gamelog form
 
     for season_data in player_stats:
 
@@ -87,17 +77,20 @@ def player_details(request, player_full_name, player_id):
     player_page_info = [player_headshot, player_bio, career_stats]
     request.session['player_page_info'] = player_page_info
 
-    # Initialize forms
+        # Initialize forms
     player_form = PlayerSearchForm()
     form = StatsDropdownForm()
     graph_form = PlayerGraphForm()
+    game_log_form = PlayerRegularGameLogForm(player_stats=player_stats_form)
+    playoffs_game_log_form = PlayerPlayoffsGameLogsForm(player_stats=player_stats_playoffs)
+    shot_chart_form = PlayerRegShotChartForm(player_stats=player_stats_form)
 
     if request.method == 'POST':
         form = StatsDropdownForm(request.POST)
         if form.is_valid():
             stats_option = form.cleaned_data['option']
 
-            # regular season numbers
+            # regular season numbers logic
             if stats_option == 'Reg. Season':
                 return redirect('nba_stats:regular_season', player_id=player_id, player_full_name=player_full_name)
 
@@ -115,21 +108,70 @@ def player_details(request, player_full_name, player_id):
             else:
                 return redirect('home')
 
-        graph_form = PlayerGraphForm(request.POST)
-        if graph_form.is_valid():
-            career_category = graph_form.cleaned_data['career_category']
-            stat_option = graph_form.cleaned_data['stat_option']
+        # player graph logic
+        if 'graph_submit' in request.POST:
+            graph_form = PlayerGraphForm(request.POST)
+            if graph_form.is_valid():
+                career_category = graph_form.cleaned_data['career_category']
+                stat_option = graph_form.cleaned_data['stat_option']
 
-            title = graph_form.get_graph_title(stat_option)
-            graph,stat = get_player_graph(player_id=player_id, player_name=player_full_name, career_stats=career_stats,
-                                     stat_category=stat_option, career_category=career_category,
-                                     title=title)
-            # Append graph and stat to players info list and store in session for use in next view
-            player_page_info.append(graph)
-            player_page_info.append(stat)
-            return redirect('nba_stats:player_graph', player_id=player_id, player_full_name=player_full_name,
-                            category=stat_option)
+                title = graph_form.get_graph_title(stat_option)
+                graph,stat = get_player_graph(player_id=player_id, player_name=player_full_name, career_stats=career_stats,
+                                        stat_category=stat_option, career_category=career_category,
+                                        title=title)
+                # Append graph and stat to players info list and store in session for use in next view
+                player_page_info.append(graph)
+                player_page_info.append(stat)
+                return redirect('nba_stats:player_graph', player_id=player_id, player_full_name=player_full_name,
+                                category=stat_option)
 
+        # player regular season game log logic
+        if 'regular_submit' in request.POST:
+            game_log_form = PlayerRegularGameLogForm(request.POST, player_stats=player_stats_form)
+            if game_log_form.is_valid():
+                season_type = "Regular Season"
+                season = game_log_form.cleaned_data['season']
+                return redirect('nba_stats:player_game_log', player_id=player_id, player_full_name=player_full_name,
+                            season=season, season_type=season_type)
+
+        # player playoffs game log logic
+        if 'playoffs_submit' in request.POST:
+            playoffs_game_log_form = PlayerPlayoffsGameLogsForm(request.POST, player_stats=player_stats_playoffs)
+            if playoffs_game_log_form.is_valid():
+                season_type = "Playoffs"
+                season = playoffs_game_log_form.cleaned_data['season']
+                return redirect('nba_stats:player_game_log', player_id=player_id, player_full_name=player_full_name,
+                                season=season, season_type=season_type)
+            
+        if 'shot_chart_submit' in request.POST:
+            shot_chart_form = PlayerRegShotChartForm(request.POST, player_stats=player_stats_form)
+            if shot_chart_form.is_valid():
+                season = shot_chart_form.cleaned_data['season']
+                context_measure = shot_chart_form.cleaned_data['context_measure']
+                season_type = "Regular Season"
+
+                # look up team_id for that season
+                team_id = None
+                for season_data in player_stats_form:
+                    if season_data['SEASON_ID'] == season:
+                        team_id = season_data.get('TEAM_ID')
+                        break
+
+                # handle case where no team found (player didn’t play that year)
+                if not team_id:
+                    # you could raise a message, default to latest team, or redirect with error
+                    team_id = player_bio.get('TEAM_ID')  # fallback
+
+                return redirect(
+                    'nba_stats:player_shot_chart',
+                    player_id=player_id,
+                    player_full_name=player_full_name,
+                    season=season,
+                    season_type=season_type,
+                    context_measure=context_measure,
+                    team_id=team_id
+                )
+            
     context = {'player_form': player_form,
                'player_headshot': player_headshot,
                'player_full_name': player_full_name,
@@ -137,7 +179,10 @@ def player_details(request, player_full_name, player_id):
                'player_id': player_id,
                'form': form,
                'player_bio': player_bio,
-               'graph_form': graph_form
+               'graph_form': graph_form,
+               'game_log_form': game_log_form,
+               'playoffs_game_log_form': playoffs_game_log_form,
+               'shot_chart_form': shot_chart_form,
                }
 
     return render(request, 'nba_stats/career_stats.html', context=context)
@@ -696,3 +741,121 @@ def update_player_bio(request, player_id, player_name):
     }
 
     return render(request, 'partials/player_bio.html', context=context)
+
+# player game log page
+def player_game_log(request, player_full_name, player_id, season, season_type):
+        # get session info containing player headshot, bio awards and career stats
+    player_page_info = request.session.get("player_page_info", None)
+
+    if player_page_info:
+        player_headshot = player_page_info[0]
+        player_bio = player_page_info[1]
+
+        # get regular season stats
+        career_stats = player_page_info[2]
+        player_stats = career_stats['SeasonTotalsRegularSeason']
+
+    else:
+        # Get player headshot
+        player_headshot = get_player_image(player_id)
+
+        # Get players yearly numbers
+        player_stats = player_regular_season(player_id)
+
+        # get player bio
+        player_bio = get_player_bio(player_full_name)
+
+    game_log = get_game_log(player_id, season, season_type)
+    #convert data frame to a list of dicts before passing to the template.
+    game_log_df = pd.DataFrame(game_log)
+    game_log = game_log_df.to_dict(orient='records')
+    # Initialize forms
+    player_form = PlayerSearchForm()
+
+    context = {
+        'player_form': player_form,
+        'player_full_name': player_full_name,
+        'player_id': player_id,
+        'season': season,
+        'season_type': season_type,
+        'player_headshot': player_headshot,
+        'player_bio': player_bio,
+        'player_stats': player_stats,
+        'game_log': game_log
+    }
+
+    return render(request, 'nba_stats/game_log.html', context=context)
+
+    # game_log_form = PlayerGameLogForm(request.POST, player_stats=player_stats_form)
+    # if request.method == 'POST':
+    #     game_log_form = PlayerGameLogForm(request.POST, player_stats=player_stats_form)
+    #     if game_log_form.is_valid():
+    #         season = game_log_form.cleaned_data['season']
+    #         return redirect('nba_stats:player_game_log', player_id=player_id, player_full_name=player_full_name,
+    #                         season=season)
+
+def player_shot_chart(request, player_full_name, player_id, season, season_type, context_measure, team_id):
+    # get session info containing player headshot, bio awards and career stats
+    player_page_info = request.session.get("player_page_info", None)
+
+    context_readable = {
+        'PTS': 'Points',
+        'FGA': 'Field Goal Attempts',
+        'FGM': 'Field Goals Made',
+        'FG3M': '3 Point Makes',
+        'FG3A': '3 Point Attempts',
+        'TS_PCT': 'True Shooting Percentage',
+        'PTS_OFF_TOV': 'Points off Turnovers',
+        'PTS_2ND_CHANCE': '2nd Chance Points',
+    }
+    stat_category = context_readable[context_measure]
+
+    if player_page_info:
+        player_headshot = player_page_info[0]
+        player_bio = player_page_info[1]
+        career_stats = player_page_info[2]
+        player_stats = career_stats['SeasonTotalsRegularSeason']
+    else:
+        player_headshot = get_player_image(player_id)
+        player_stats = player_regular_season(player_id)
+        player_bio = get_player_bio(player_full_name)
+
+    # title
+    title = f"{player_full_name} {context_measure} Shot Chart - {season} Season."
+
+    # Get Shotchart Data using nba_api
+    player_shot_chart, league_average = get_shot_chart(
+        player_id=player_id,
+        team_id=team_id,
+        season=season,
+        season_type=season_type,
+        context_measure=context_measure
+    )
+
+    # draw chart
+    shot_chart(player_shot_chart, title=title)
+    plt.rcParams['figure.figsize'] = (12, 11)
+
+    # use helper
+    image_base64 = render_plot_to_base64()
+
+    # Initialize forms
+    player_form = PlayerSearchForm()
+
+    context = {
+        'player_form': player_form,
+        'player_full_name': player_full_name,
+        'player_id': player_id,
+        'season': season,
+        'title': title,
+        'team_id': team_id,
+        'season_type': season_type,
+        'context_measure': context_measure,
+        'stat_category': stat_category,
+        'player_headshot': player_headshot,
+        'player_bio': player_bio,
+        'player_stats': player_stats,
+        'player_shot_chart': image_base64,
+    }
+
+    return render(request, 'nba_stats/shot_chart.html', context=context)

@@ -90,7 +90,9 @@ Post Season Totals
             {% for season_data in player_stats %}
             <tr>
                     <td>{{ season_data.SEASON_ID }}</td>
-                    <td>{{ season_data.TEAM_ABBREVIATION }}</td>
+                    <td>
+                        <img src="{{ season_data.TEAM_ABBREVIATION|team_logo }}" alt="{{ season_data.TEAM_ABBREVIATION }} logo" />
+                    </td>
                     <td>{{ season_data.PLAYER_AGE }}</td>
                     <td>{{ season_data.PTS|intcomma }}</td>
                     <td>{{ season_data.PPG }}</td>

@@ -19,4 +19,6 @@ urlpatterns = [
          name='post_season_rankings'),
     path('player-graph/<str:player_full_name>/<str:player_id>/<str:category>/', views.player_graph,
          name='player_graph'),
+     path('player-game-log/<str:player_full_name>/<str:player_id>/<str:season>/<str:season_type>/', views.player_game_log, name='player_game_log'),
+     path('player-shot-chart/<str:player_full_name>/<str:player_id>/<str:season>/<str:season_type>/<str:context_measure>/<str:team_id>/', views.player_shot_chart, name='player_shot_chart'),
 ]

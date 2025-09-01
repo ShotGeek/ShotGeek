@@ -1,5 +1,6 @@
 from django import forms
 from django.core import validators
+from .functions import get_years_played
 
 STAT_OPTIONS = (
     ('--- View Stats By Year ---', '--- View Stats By Year  ---'),
@@ -89,24 +90,13 @@ class TeamSearchForm(forms.Form):
 
 # form for getting more stats
 class StatsDropdownForm(forms.Form):
-    option = forms.ChoiceField(choices=STAT_OPTIONS, label="Career Totals", required=True, error_messages={'required':'Please select an option'})
+    option = forms.ChoiceField(choices=STAT_OPTIONS, label="Season Type", required=True, error_messages={'required':'Please select an option'})
 
 # form for stats comparison
 
 
 class StatsCompForm(forms.Form):
     option = forms.ChoiceField(choices=COMP_OPTIONS, label="", required=True, error_messages={'required':'Please select an option'})
-
-    def clean_option(self):
-        """
-        Ran into a when I accidentally submitted default without selecting a graph. 
-        Adding this should help.
-        """
-        value = self.cleaned_data.get('option')
-        # Prevent submitting the placeholder option
-        if isinstance(value, str) and value.strip().startswith('---'):
-            raise forms.ValidationError('Please select a stat to compare.')
-        return value
 
     # this method will allow me to get the selected option's readable value to use for the graph's title
     def get_graph_title(self, selected_option):
@@ -117,7 +107,7 @@ class StatsCompForm(forms.Form):
         return title
 
 
-# form for artist search
+
 class PlayerCompareForm(forms.Form):
     player1 = forms.CharField(
         validators=[validators.MaxLengthValidator(50), validators.MinLengthValidator(1)],
@@ -129,22 +119,8 @@ class PlayerCompareForm(forms.Form):
 
 
 class PlayerGraphForm(forms.Form):
-    career_category = forms.ChoiceField(label='Career Category', choices=STAT_OPTIONS, required=True, error_messages={'required':'Please select a category'})
+    career_category = forms.ChoiceField(label='Season Type', choices=STAT_OPTIONS, required=True, error_messages={'required':'Please select a category'})
     stat_option = forms.ChoiceField(choices=GRAPH_OPTIONS, label="Stat Category", required=True, error_messages={'required':'Please select a stat option'})
-
-    def clean_stat_option(self):
-        value = self.cleaned_data.get('stat_option')
-        # Prevent submitting the placeholder option
-        if isinstance(value, str) and value.strip().startswith('---'):
-            raise forms.ValidationError('Please select a stat.')
-        return value
-    
-    def clean_career_category(self):
-        value = self.cleaned_data.get('career_category')
-        # Prevent submitting the placeholder option
-        if isinstance(value, str) and value.strip().startswith('---'):
-            raise forms.ValidationError('Please select a career category.')
-        return value
 
     # this method will allow me to get the selected option's readable value to use for the graph's title
     def get_graph_title(self, selected_option):
@@ -153,3 +129,59 @@ class PlayerGraphForm(forms.Form):
                 title = reader_value
 
         return title
+    
+
+class PlayerRegularGameLogForm(forms.Form):
+    season = forms.ChoiceField(label='Regular Season', required=True, error_messages={'required':'Please select a season'})
+
+    # To dynamically populate the season choices in the PlayerGameLogForm, we set the choices in the form's 
+    # __init__ method. This allows us to pass the relevant player stats (or any data needed to 
+    # determine the seasons) when instantiating the form.
+    def __init__(self, *args, player_stats=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if player_stats is not None:
+            seasons = self.get_player_seasons(player_stats)
+            self.fields['season'].choices = [(s, s) for s in seasons]
+        else:
+           self.fields['season'].choices = [('No Regular Season Stats to display ☹️', 'No Regular Season Stats to display ☹️')]
+
+    def get_player_seasons(self, player_stats):
+        # Call the function to get the player's seasons
+        seasons = get_years_played(player_stats)
+        return seasons
+
+class PlayerPlayoffsGameLogsForm(forms.Form):
+    season = forms.ChoiceField(label='Playoff Season', required=True, error_messages={'required':'Please select a season'})
+
+    # To dynamically populate the season choices in the PlayerPlayoffsGameLogsForm, we set the choices in the form's
+    # __init__ method. This allows us to pass the relevant player stats (or any data needed to
+    # determine the seasons) when instantiating the form.
+    def __init__(self, *args, player_stats=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if player_stats is not None:
+            seasons = self.get_player_seasons(player_stats)
+            self.fields['season'].choices = [(s, s) for s in seasons]
+        else:
+           self.fields['season'].choices = [('No Playoff Stats to display ☹️', 'No Playoff Stats to display ☹️')]
+
+    def get_player_seasons(self, player_stats):
+        # Call the function to get the player's seasons
+        seasons = get_years_played(player_stats)
+        return seasons
+
+class PlayerRegShotChartForm(forms.Form):
+    season = forms.ChoiceField(label='Season', required=True, error_messages={'required':'Please select a season'})
+    context_measure = forms.ChoiceField(label='Shot Category', choices=[('PTS', 'Points'), ('FGA', 'Field Goal Attempts'), ('FGM', 'Field Goals Made'), ('FG3M', '3 Point Makes'), ('FG3A', '3 Point Attempts'), ('TS_PCT', 'True Shooting Percentage'), ('PTS_OFF_TOV', 'Points off Turnovers'), ('PTS_2ND_CHANCE', '2nd Chance Points')], required=True, error_messages={'required':'Please select a context measure'})
+
+    def __init__(self, *args, player_stats=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if player_stats is not None:
+            seasons = self.get_player_seasons(player_stats)
+            self.fields['season'].choices = [(s, s) for s in seasons]
+        else:
+           self.fields['season'].choices = [('None', 'Nothing to display')]
+
+    def get_player_seasons(self, player_stats):
+        # Call the function to get the player's seasons played
+        seasons = get_years_played(player_stats)
+        return seasons

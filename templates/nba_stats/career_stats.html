@@ -10,37 +10,38 @@
 <div class="container mt-4">
 
     <!-- Player Card -->
-    <div class="card mb-4">
+    <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <div class="row">
                 <!-- Player Image -->
                 <div class="col-md-4 text-center">
                     <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}">
-                        <img src="{{ player_headshot.0 }}" style="background-color: {{ player_headshot.1 }}" alt="Player Image" class="rounded-circle img-fluid mt-3  w-75">
+                        <img src="{{ player_headshot.0 }}" 
+                             style="background-color: {{ player_headshot.1 }}" 
+                             alt="Player Image" 
+                             class="rounded-circle img-fluid mt-3 w-75">
                     </a>
                 </div>
 
                 <!-- Player Bio -->
-                <div class="col-md-4 d-flex flex-column justify-content-center"  id="player-bio">
+                <div class="col-md-4 d-flex flex-column justify-content-center" id="player-bio">
                     <h1 class="card-title" style="color: #b4513e;">{{ player_full_name }} #{{ player_bio.number }}</h1>
-                    <h6><b>School:</b> {{ player_bio.school }} | <b>Country:</b> {{ player_bio.country }}</h6>
-                    <h6><b>Height:</b> {{ player_bio.height }} | <b>Weight:</b> {{ player_bio.weight }}</h6>
-                    <h6><b>Year:</b> {{ player_bio.year }}</h6>
-                    <h6><b>Position:</b> {{ player_bio.position }} | <b>Status:</b> {{ player_bio.status }}</h6>
-                    <h6><b>PPG:</b> {{ player_bio.PTS }} | <b>RPG:</b> {{ player_bio.REB }} | <b>APG:</b> {{ player_bio.AST }} <b>STLPG:</b> {{ player_bio.STL }} <b>BLKPG:</b> {{ player_bio.BLK }}</h6>
-                 <!-- <button class="btn btn-outline-success mt-3"
-                            hx-get="{% url 'nba_stats:update_player_bio' player_id=player_id player_name=player_full_name %}"
-                            hx-target="#player-bio"
-                            hx-swap="outerHTML"
-                            hx-trigger="click">
-                        Update Bio
-                    </button> -->
+                    <p><b>School:</b> {{ player_bio.school }} | <b>Country:</b> {{ player_bio.country }}</p>
+                    <p><b>Height:</b> {{ player_bio.height }} | <b>Weight:</b> {{ player_bio.weight }}</p>
+                    <p><b>Year:</b> {{ player_bio.year }}</p>
+                    <p><b>Position:</b> {{ player_bio.position }} | <b>Status:</b> {{ player_bio.status }}</p>
+                    <p>
+                        <b>PPG:</b> {{ player_bio.PTS }} | 
+                        <b>RPG:</b> {{ player_bio.REB }} | 
+                        <b>APG:</b> {{ player_bio.AST }} | 
+                        <b>STLPG:</b> {{ player_bio.STL }} | 
+                        <b>BLKPG:</b> {{ player_bio.BLK }}
+                    </p>
                 </div>
 
                 <!-- Career Awards -->
                 <div class="col-md-4 d-flex flex-column justify-content-center" id="player-awards">
                     <h4>Career Awards</h4>
-                    <hr>
                     <button class="btn btn-outline-success mt-3"
                             hx-get="{% url 'nba_stats:update_player_awards' player_id=player_id player_name=player_full_name %}"
                             hx-target="#player-awards"
@@ -51,19 +52,20 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer d-flex justify-content-between">
-            <div class="text-muted">{{ player_full_name }}</div>
-            <div class="text-muted">#{{ player_bio.number }}</div>
+        <div class="card-footer d-flex justify-content-between text-muted">
+            <span>{{ player_full_name }}</span>
+            <span>#{{ player_bio.number }}</span>
         </div>
     </div>
 
-    <!-- Player Details Table -->
-    <div class="row">
-        <div class="col-md-12">
-            <h2 class="mt-4">Career Totals</h2>
+    <!-- Career Totals Table -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h2 class="mb-3">Career Totals</h2>
             <div class="table-responsive">
-                <table class="table table-bordered mt-2">
-                    <thead>
+                <table class="table table-striped table-hover align-middle">
+                    <caption class="text-muted">Player career totals across all seasons</caption>
+                    <thead class="table-dark">
                         <tr>
                             <th>Points</th>
                             <th>Assists</th>
@@ -118,25 +120,77 @@
         </div>
     </div>
 
-    <!-- Forms for Viewing Table and Graphs -->
-    <hr>
-    <div class="container">
-        <h3>Career Totals: Table</h3>
-        <form method="post" class="form-inline">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn btn-primary btn-lg" id="loadButton" type="submit">View Table</button>
-        </form>
+    <!-- Forms Section -->
+    <div class="row g-4">
+        <!-- Career Totals Table Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">Career Totals: Table</h4>
+                    <p class="text-muted small">Select a season or category to view detailed tables of points, assists, rebounds, shooting percentages, and more.</p>
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button class="btn btn-primary w-100" type="submit">View Table</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Career Trends Graphs Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="card-title text-danger">Career Trends: Graphs</h4>
+                    <p class="text-muted small">Visualize career trends across seasons. Select a stat to generate interactive graphs showing performance changes.</p>
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        {{ graph_form.as_p }}
+                        <button name="graph_submit" class="btn btn-danger w-100" type="submit">View Graph</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <hr>
-    <div class="container">
-        <h3>Career Trends: Graphs</h3>
-        <form method="post" class="form-inline">
-            {% csrf_token %}
-            {{ graph_form.as_p }}
-            <button class="btn btn-primary btn-lg" id="loadButton" type="submit">View Graph</button>
-        </form>
+
+    <div class="row g-4 mt-2">
+        <!-- Game Logs Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="card-title text-dark">Game Logs</h4>
+                    <p class="text-muted small">Choose a season to see a game-by-game breakdown of points, assists, rebounds, and other stats.</p>
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        {{ game_log_form.as_p }}
+                        <button name="regular_submit" class="btn btn-dark w-100" type="submit">View Game Logs</button>
+                    </form>
+                    <hr>
+                    <p class="text-muted small">View game-by-game playoff performance across seasons.</p>
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        {{ playoffs_game_log_form.as_p }}
+                        <button name="playoffs_submit" class="btn btn-secondary w-100" type="submit">View Playoffs Game Logs</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shot Chart Card -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">Career Shot Charts</h4>
+                    <p class="text-muted small">Generate shot charts for any season. Select a shot category to visualize shooting performance across the court.</p>
+                    <form method="post" class="mt-2">
+                        {% csrf_token %}
+                        {{ shot_chart_form.as_p }}
+                        <button name="shot_chart_submit" class="btn btn-primary w-100" type="submit">View Shot Chart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<hr>
 {% endblock %}
+

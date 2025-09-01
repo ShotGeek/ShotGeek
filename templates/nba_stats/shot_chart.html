@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load custom_tags %}
+{% load static %}
+{% block title %}
+{{ player_full_name }} Shot Chart {{ season }} {{ season_type }}
+{% endblock %}
+
+{% block content %}
+ <div class="container mt-4">
+    <!-- Player Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <!-- Player Image -->
+                <div class="col-md-4 text-center">
+                    <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}">
+                        <img src="{{ player_headshot.0 }}" style="background-color: {{ player_headshot.1 }}" alt="Player Image" class="rounded-circle img-fluid mt-3  w-75">
+                    </a>
+                </div>
+
+                <!-- Player Bio -->
+                <div class="col-md-4 d-flex flex-column justify-content-center"  id="player-bio">
+                    <h1 class="card-title" style="color: #b4513e;">{{ player_full_name }} #{{ player_bio.number }}</h1>
+                    <h6><b>School:</b> {{ player_bio.school }} | <b>Country:</b> {{ player_bio.country }}</h6>
+                    <h6><b>Height:</b> {{ player_bio.height }} | <b>Weight:</b> {{ player_bio.weight }}</h6>
+                    <h6><b>Year:</b> {{ player_bio.year }}</h6>
+                    <h6><b>Position:</b> {{ player_bio.position }} | <b>Status:</b> {{ player_bio.status }}</h6>
+                    <h6><b>PPG:</b> {{ player_bio.PTS }} | <b>RPG:</b> {{ player_bio.REB }} | <b>APG:</b> {{ player_bio.AST }} <b>STLPG:</b> {{ player_bio.STL }} <b>BLKPG:</b> {{ player_bio.BLK }}</h6>
+                </div>
+
+                <!-- Career Awards -->
+                <div class="col-md-4 d-flex flex-column justify-content-center" id="player-awards">
+                    <h4>Career Awards</h4>
+                    <hr>
+                    <button class="btn btn-outline-success mt-3"
+                            hx-get="{% url 'nba_stats:update_player_awards' player_id=player_id player_name=player_full_name %}"
+                            hx-target="#player-awards"
+                            hx-swap="outerHTML"
+                            hx-trigger="click">
+                        Show Career Awards
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <div class="text-muted">{{ player_full_name }}</div>
+            <div class="text-muted">#{{ player_bio.number }}</div>
+        </div>
+    </div>
+    <!-- Shot Chart Section -->
+    <div class="row">
+        <div class="col-md-12 text-center" id="shot-chart-container">
+            <h2 class="mt-4">{{ player_full_name }} {{ stat_category }} Shot Chart for {{ season }} {{ season_type }}</h2>
+            <img src="data:image/png;base64,{{ player_shot_chart }}" alt="Shot Chart" class="img-fluid mt-3 border">
+        </div>
+    </div>
+        <hr>
+    <div class="mt-3">
+        <a href="{% url 'nba_stats:player_details' player_full_name=player_full_name player_id=player_id %}" class="btn btn-primary">Back To {{ player_full_name }} Page</a>
+    </div>
+</div>  
+
+{% endblock %}
