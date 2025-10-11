@@ -22,3 +22,4 @@ Here are the amazing individuals who have contributed to this project:
 - [Vanessa Mohr](https://github.com/vanessamohr)🏀
 - [Kopano Mashaba](https://github.com/Skoperrr) 🏀
 - [Eusébio Simango](https://github.com/EusebioSimango) 🏀
+- [Kait Crawford](https://github.com/KaitCrawford) 🏀

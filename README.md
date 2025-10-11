@@ -81,6 +81,12 @@ The Docker Compose setup includes live reloading, so changes to your code will a
    ```
 8. Open your browser and visit: `http://127.0.0.1:8000/`
 
+### Displaying team logos
+When running the application locally team logos won't be displayed by default. Insert them with:
+   ```sh
+   python manage.py insert_teams
+   ```
+
 ## Usage
 ### Searching for a Player
 - Enter the player's full name in the search bar.
