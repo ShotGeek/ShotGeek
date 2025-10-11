@@ -32,6 +32,7 @@ COMP_OPTIONS = (
     ('FGA', 'Field Goal Attempts'),
     ('FG_PCT', 'Field Goal %'),
     ('FG3A', 'Three-Point Attempts'),
+    ('FG3M', 'Three-Point Makes'),
     ('FG3_PCT', '3 Point %'),
     ('FT_PCT', 'Free Throw %'),
 )
