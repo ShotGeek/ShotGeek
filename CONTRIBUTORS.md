@@ -2,7 +2,7 @@
 
 We sincerely appreciate the efforts of all contributors who have helped improve this project. Your contributions, whether through code, documentation, design, or discussions, make a significant impact.
 
-# Contributors List
+## Contributors List
 
 Here are the amazing individuals who have contributed to this project:
 
@@ -18,4 +18,4 @@ Here are the amazing individuals who have contributed to this project:
 - [Chris Achinga](https://github.com/achingachris)🏀
 - [Julius Boakye](https://github.com/Darkbeast-glitch)🏀
 - [Raphaël Titsworth-Morin](https://github.com/raphaeltm)🏀
-
+- [Vanessa Mohr](https://github.com/vanessamohr)🏀
