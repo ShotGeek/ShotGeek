@@ -38,6 +38,8 @@ COMP_OPTIONS = (
     ('FT_PCT', 'Free Throw %'),
     ('FTA', 'Free Throw Attempts'),
     ('FTM', 'Free Throws Made'),
+    ('RPG', 'Rebs Per Game'),
+    ('OREB', 'Offensive Rebounds')
 )
 
 GRAPH_OPTIONS = (
