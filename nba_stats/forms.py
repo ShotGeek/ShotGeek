@@ -26,6 +26,7 @@ COMP_OPTIONS = (
     ('--- Compare Stats By Season ---', '--- Compare Stats By Season ---'),
     ('PPG', 'Points Per Game'),
     ('RPG', 'Rebs Per Game'),
+    ('DREB', 'Defensive Rebounds'),
     ('APG', 'Assists Per Game'),
     ('BLKPG', 'Blocks Per Game'),
     ('STLPG', 'Steals Per Game'),
