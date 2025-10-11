@@ -34,6 +34,8 @@ COMP_OPTIONS = (
     ('FG3A', 'Three-Point Attempts'),
     ('FG3_PCT', '3 Point %'),
     ('FT_PCT', 'Free Throw %'),
+    ('FTA', 'Free Throw Attempts'),
+    ('FTM', 'Free Throws Made'),
 )
 
 GRAPH_OPTIONS = (
