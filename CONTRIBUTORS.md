@@ -21,3 +21,4 @@ Here are the amazing individuals who have contributed to this project:
 - [Cecilia Tivir](https://github.com/ctivir)🏀
 - [Vanessa Mohr](https://github.com/vanessamohr)🏀
 - [Kopano Mashaba](https://github.com/Skoperrr) 🏀
+- [Kait Crawford](https://github.com/KaitCrawford) 🏀
