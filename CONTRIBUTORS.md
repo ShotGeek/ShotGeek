@@ -19,4 +19,4 @@ Here are the amazing individuals who have contributed to this project:
 - [Julius Boakye](https://github.com/Darkbeast-glitch)🏀
 - [Raphaël Titsworth-Morin](https://github.com/raphaeltm)🏀
 - [Cecilia Tivir](https://github.com/ctivir)🏀
-
+- [Vanessa Mohr](https://github.com/vanessamohr)🏀
