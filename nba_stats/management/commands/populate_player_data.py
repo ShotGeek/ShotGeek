@@ -10,6 +10,24 @@ import os
 API_KEY = os.getenv('BDL_API')
 api = BalldontlieAPI(api_key=API_KEY)
 
+# Only positions that fit max_length=2 and match PlayerBio.POSITION_CHOICES
+_VALID_POSITIONS = {'PG', 'SG', 'G', 'SF', 'PF', 'F', 'C'}
+
+
+def _clean_position(pos):
+    """Return pos if it's a recognised 1-2 char code, else None."""
+    if pos in _VALID_POSITIONS:
+        return pos
+    elif pos == 'G-F':
+        return 'SF'
+    elif pos == 'F-G':
+        return 'SF'
+    elif pos == 'F-C':
+        return 'PF'
+    elif pos == 'C-F':
+        return 'PF'
+    return None
+
 
 
 NBA_HEADERS = {
@@ -115,7 +133,7 @@ class Command(BaseCommand):
                         PlayerBio.objects.update_or_create(
                             player=player,
                             defaults={
-                                'position': item.position,
+                                'position': _clean_position(item.position),
                                 'school': item.college,
                                 'country': item.country,
                                 'height': item.height,
