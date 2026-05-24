@@ -25,7 +25,7 @@
   <div class="sg-card-img-wrap" style="background-color: {% if player1.status == 'Active' %}#F85D2B {% else %}#00284D{% endif %};">
     <img src="{% if player1.status == 'Active' %}{% static 'images/modern-ball/ShotGeek - Modern Basketball - White.png' %}{% else %}{% static 'images/old-ball/ShotGeek - Old Basketball - White.png' %}{% endif %}"
          alt="" class="sg-card-bg-ball" aria-hidden="true">
-    <a href="{% url 'nba_stats:player_details' player_full_name=player1.full_name player_id=player1.player_id %}">
+    <a href="#">
       <img src="{{ player1.image_url }}"
            alt="{{ player1.full_name }}"
            class="sg-player-img"
@@ -86,8 +86,8 @@
       </div>
       <button type="submit" class="sg-btn">SWAP</button>
     </form>
-    <a href="{% url 'nba_stats:player_details' player_full_name=player1.full_name player_id=player1.player_id %}"
-       class="sg-btn sg-btn-outline">PROFILE</a>
+    <!-- <a href="{% url 'nba_stats:player_details' player_full_name=player1.full_name player_id=player1.player_id %}"
+       class="sg-btn sg-btn-outline">PROFILE</a> -->
   </div>
 
   {% if player1_error %}
