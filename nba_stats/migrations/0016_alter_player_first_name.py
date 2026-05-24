@@ -1,6 +1,7 @@
 # Fix negative substring length for single-name players (e.g. "Nene").
 # StrIndex returns 0 when there is no space, making the old expression
 # produce length -1, which PostgreSQL rejects.
+# Django does not support AlterField on GeneratedFields, so we remove and re-add.
 
 import django.db.models.expressions
 import django.db.models.functions.comparison
@@ -15,7 +16,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.RemoveField(
+            model_name="player",
+            name="first_name",
+        ),
+        migrations.AddField(
             model_name="player",
             name="first_name",
             field=models.GeneratedField(
