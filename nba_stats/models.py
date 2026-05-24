@@ -2,7 +2,7 @@ from django.db import models
 from nba_teams.models import NBATeam
 from django.utils import timezone
 from django.db.models import F, Value
-from django.db.models.functions import Substr, StrIndex, Length
+from django.db.models.functions import Coalesce, Greatest, NullIf, Substr, StrIndex, Length
 import requests
 from bs4 import BeautifulSoup
 
@@ -40,11 +40,20 @@ class Player(models.Model):
     bdl_id = models.IntegerField(unique=True, null=True) # ball don't lie ID
     full_name = models.CharField(max_length=500)
 
-    # Extract first name (everything before the first space)
+    # Extract first name (everything before the first space).
+    # Greatest(..., 0) prevents a negative length for single-name players (e.g. "Nene").
+    # NullIf/Coalesce falls back to full_name when there is no space at all.
     first_name = models.GeneratedField(
-        expression=Substr('full_name', 1, StrIndex('full_name', Value(' ')) - 1),
+        expression=Coalesce(
+            NullIf(
+                Substr('full_name', 1, Greatest(StrIndex('full_name', Value(' ')) - 1, Value(0))),
+                Value(''),
+            ),
+            F('full_name'),
+            output_field=models.CharField(max_length=100),
+        ),
         output_field=models.CharField(max_length=100),
-        db_persist=True  # saves to DB, not just computed at query time
+        db_persist=True,
     )
 
     # Extract last name (everything after the first space)
