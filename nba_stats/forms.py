@@ -65,7 +65,12 @@ class PlayerSearchForm(forms.Form):
             attrs={
                 'placeholder': 'Search a player',
                 'class': 'form-control',
-                'aria-label': 'Player Name'
+                'aria-label': 'Player Name',
+                'hx-get': '/autocomplete/player/',  # your URL
+                'hx-trigger': 'keyup changed delay:300ms',
+                'hx-target': '#autocomplete-results',
+                'autocomplete': 'off',
+                'hx-indicator': ".htmx-indicator"
             }
         ),
         error_messages={
@@ -73,6 +78,7 @@ class PlayerSearchForm(forms.Form):
             'max_length': 'Player name cannot exceed 100 characters.'
         }
     )
+
 
 
 class TeamSearchForm(forms.Form):
@@ -117,11 +123,17 @@ class StatsCompForm(forms.Form):
 class PlayerCompareForm(forms.Form):
     player1 = forms.CharField(
         validators=[validators.MaxLengthValidator(50), validators.MinLengthValidator(1)],
-        widget=forms.TextInput(attrs={'placeholder': 'Enter Player 1', 'style': 'width:300px'}))
+        widget=forms.TextInput(attrs=
+                {'placeholder': 'Enter Player 1', 'style': 'width:300px',
+                'class': 'form-control',
+            }))
 
     player2 = forms.CharField(
         validators=[validators.MaxLengthValidator(50), validators.MinLengthValidator(1)],
-        widget=forms.TextInput(attrs={'placeholder': 'Enter Player 2', 'style': 'width:300px'}))
+        widget=forms.TextInput(attrs=
+                {'placeholder': 'Enter Player 2', 'style': 'width:300px',
+                'class': 'form-control',
+            }))
 
 
 class PlayerGraphForm(forms.Form):

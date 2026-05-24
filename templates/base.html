@@ -16,61 +16,161 @@
     {% load static %}
     {% load cache_bust %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="icon" sizes="80x80" href="{% static 'images/shotgeek-banner.png' %}">
-    <link rel="icon" sizes="16x16" href="{% static 'images/shotgeek-banner.png' %}">
+    <link rel="icon" href="{% static 'images/logo-icon/ShotGeek - Logo Icon.png' %}">
+    <link rel="icon" href="{% static 'images/logo-icon/ShotGeek - Logo Icon.png' %}">
     <link rel="stylesheet" href="{% static_bust 'css/style.css' %}">
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script> <!-- Add htmx -->
+    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Add chart.js -->
 </head>
 <body>
-<!-- Loader Section (Place in base.html) -->
+<!-- Loader Section -->
 <div id="loader" class="loader-overlay">
-    <div class="img-flex">
-        <img src="{% static 'images/ShotGeek-loader.gif' %}" alt="Loading..." />
+    <div class="sg-loader-stage">
+        <img id="sg-ball-orange" class="sg-ball" src="{% static 'images/modern-ball/orange-ball.png' %}" alt="">
+        <img id="sg-ball-navy"   class="sg-ball" src="{% static 'images/old-ball/navy-ball.png' %}"    alt="">
     </div>
 </div>
+<style>
+/* ── ShotGeek collision loader ─────────────────────────────── */
+.sg-loader-stage {
+    position: relative;
+    width: 360px;
+    height: 120px;
+}
+
+.sg-ball {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    top: 5px;
+}
+
+/* Center navbar logo in the middle of the page */
+.sg-navbar-centered {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sg-navbar-centered .navbar-brand {
+    margin: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.sg-logo-tagline {
+    margin-top: 0.15rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #00284D;
+    line-height: 1;
+}
+
+.sg-navbar-centered .navbar-toggler {
+    position: absolute;
+    right: 0.75rem;
+}
+
+#sg-ball-orange {
+    left: 0;
+    animation: sg-roll-in-left 1.2s ease-in-out infinite;
+    transform-origin: center center;
+}
+
+#sg-ball-navy {
+    right: 0;
+    animation: sg-roll-in-right 1.2s ease-in-out infinite;
+    transform-origin: center center;
+}
+
+@keyframes sg-roll-in-left {
+    0%   { transform: translateX(0)     rotate(0deg); }
+    42%  { transform: translateX(125px) rotate(200deg); }
+    50%  { transform: translateX(120px) rotate(210deg) scale(1.12, 0.82); }
+    100% { transform: translateX(0)     rotate(0deg); }
+}
+
+@keyframes sg-roll-in-right {
+    0%   { transform: translateX(0)      rotate(0deg); }
+    42%  { transform: translateX(-125px) rotate(-200deg); }
+    50%  { transform: translateX(-120px) rotate(-210deg) scale(1.12, 0.82); }
+    100% { transform: translateX(0)      rotate(0deg); }
+}
+</style>
 <div class="container">
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
+<nav class="navbar navbar-expand-lg navbar-light bg-white sg-navbar-centered">
         <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'images/31.png' %}" alt="Logo" class="img-fluid navbar-logo d-none d-sm-block">
-            <img src="{% static 'images/31.png' %}" alt="Logo" class="img-fluid navbar-logo d-xs-block d-sm-none">
+            <img src="{% static 'images/logo/Secondery.png' %}" alt="Logo" class="img-fluid navbar-logo d-none d-sm-block">
+            <img src="{% static 'images/logo/Secondery.png' %}" alt="Logo" class="img-fluid navbar-logo d-xs-block d-sm-none">
+            <span class="sg-logo-tagline">Forever In Season</span>
         </a>
         <button class="navbar-toggler noloader" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}"><b>HOME</b></a>
-                </li>
+                </li> 
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'about' %}"><b>ABOUT</b></a>
                 </li>
             </ul>
 
-            <!-- Search Bar Form -->
             <form method="post" class="form-inline my-2 my-lg-0" action="{% url 'home' %}">
                 {% csrf_token %}
+                <div class="position-relative" style="flex: 1;">
                 {{ player_form.as_p }}
+                <div id="autocomplete-results"></div>
+                </div>
                 <button class="btn btn-secondary my-2 my-sm-0 text-center" id="loadButton" type="submit">Search</button>
             </form>
-        </div>
+        </div> -->
 </nav>
 </div>
     <hr>
     {% block content %}
     {% endblock %}
 
+    <!-- Playlist Embed Section -->
+    <section style="background:#00284D; padding: 2rem 0;">
+        <div class="container" style="max-width: 560px;">
+            <div class="text-center mb-3">
+                <p class="mb-0" style="font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:.2em; text-transform:uppercase; color:#9FD3E5; opacity:.8;">Now Playing</p>
+                <h2 style="font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; margin:0;">ShotGeek — In-Season Mix</h2>
+            </div>
+            <iframe
+                src="https://open.spotify.com/embed/playlist/{{ PLAYLIST_ID }}"
+                width="100%" height="200" frameborder="0" style="border-radius:10px;"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+            </iframe>
+            <p class="text-center mt-2 mb-0" style="font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:.1em; text-transform:uppercase; color:#9FD3E5; opacity:.6;">
+                Having trouble? <a href="https://open.spotify.com/playlist/{{ playlist_id }}" target="_blank" style="color:#F85D2B;">Open on Spotify</a>
+            </p>
+        </div>
+    </section>
+
     <footer class="footer mt-auto py-4 bg-light bg-white border-top">
         <div class="container text-center">
-          <img src="{% static 'images/31.png' %}" alt="Footer Logo" height="100" class="mb-3">
-          <p class="mb-2">&copy; 2025 ShotGeek. All rights reserved.</p>
+          <img src="{% static 'images/logo/Primary.png' %}" alt="Footer Logo" height="200" class="mb-3">
+          <p class="mb-2">&copy; 2026 ShotGeek. All rights reserved.</p>
       
-          <div class="footer-links">
+          <!-- <div class="footer-links">
             <ul class="list-inline">
             <li class="list-inline-item">
                 <a href="https://shotgeek.readthedocs.io/en/latest/index.html" target="_blank" class="text-decoration-none text-muted" title="Documentation"><i class="fa fa-book fa-lg"></i></a>
@@ -85,12 +185,35 @@
                 <a href="https://linkedin.com/company/shotgeek" target="_blank" class="text-decoration-none text-muted" title="Connect with us on LinkedIn"><i class="fa fa-linkedin fa-lg"></i></a>
               </li>
             </ul>
-          </div>
+        </div> -->
         </div>
       </footer>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Fill the nearest input from the autocomplete dropdown and clear results.
+// Uses mousedown so it fires before the input's blur event.
+function sgAcSelect(item, name) {
+    var wrap = item.closest('.position-relative');
+    var input = wrap && wrap.querySelector('input');
+    if (input) input.value = name;
+    // Clear all autocomplete result containers inside this wrapper
+    wrap && wrap.querySelectorAll('[id^="autocomplete-results"]').forEach(function(el) {
+        el.innerHTML = '';
+    });
+}
+
+// Close all autocomplete dropdowns when clicking outside a search wrapper
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.position-relative')) {
+        document.querySelectorAll('[id^="autocomplete-results"]').forEach(function(el) {
+            el.innerHTML = '';
+        });
+    }
+});
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {

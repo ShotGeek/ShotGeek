@@ -1,0 +1,13 @@
+{% if players %}
+<ul class="sg-ac-list" role="listbox">
+  {% for player in players %}
+  <li class="sg-ac-item"
+      role="option"
+      onmousedown="sgAcSelect(this, '{{ player.full_name|escapejs }}')">
+    {{ player.full_name }}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<ul class="sg-ac-list" style="display:none;"></ul>
+{% endif %}

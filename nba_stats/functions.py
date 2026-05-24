@@ -17,6 +17,20 @@ SMARTPROXY_URL = os.getenv('SMARTPROXY_URL')
 SMARTPROXY_USERNAME = os.getenv('SMARTPROXY_USERNAME')
 SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
 
+NBA_HEADERS = {
+    'Host': 'stats.nba.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'x-nba-stats-origin': 'stats',
+    'x-nba-stats-token': 'true',
+    'Connection': 'keep-alive',
+    'Referer': 'https://stats.nba.com/',
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache',
+}
+
 def create_proxy_url():
     """Helper function to create the proxy URL."""
     if SMARTPROXY_USERNAME and SMARTPROXY_PASSWORD:
@@ -35,7 +49,7 @@ def player_career_numbers(player_id):
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS)
 
     # Get the player's career stats as a dictionary
     career_dict = player_stats.get_normalized_dict()
@@ -53,9 +67,9 @@ def player_regular_season(player_id):
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
-    
-    
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS)
+
+
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
     regular_season_totals = dict_response['SeasonTotalsRegularSeason']
@@ -73,7 +87,7 @@ def player_post_season(player_id):
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS)
 
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
@@ -91,7 +105,7 @@ def rankings_regular_season(player_id):
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS)
 
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
@@ -109,9 +123,9 @@ def rankings_post_season(player_id):
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
-    
-    
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS)
+
+
     dict_response = player_stats.get_normalized_dict()  # Getting dictionary response
 
     post_season_rankings = dict_response['SeasonRankingsPostSeason']
@@ -121,44 +135,24 @@ def rankings_post_season(player_id):
 
 # retrieving player headshot and team id
 def get_player_image(player_id):
-    # Construct the proxy URL
     proxy_url = create_proxy_url()
 
-    # get player's team id
+    # Use the NBA CDN URL directly — no scraping needed
+    head_shot_url = f'https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png'
 
-    # production with proxy
-    if proxy_url:
-        player_info = commonplayerinfo.CommonPlayerInfo(player_id, proxy=proxy_url)
-    # development without proxy
-    else:
-        player_info = commonplayerinfo.CommonPlayerInfo(player_id)
-    
-    
-    player_bio = player_info.get_dict()
-    player_data = player_bio['resultSets'][0]['rowSet'][0]
-    team_id = int(player_data[18])
+    # Try to get team_id from the API; fall back to 0 if unavailable
+    try:
+        if proxy_url:
+            player_info = commonplayerinfo.CommonPlayerInfo(player_id, proxy=proxy_url)
+        else:
+            player_info = commonplayerinfo.CommonPlayerInfo(player_id, headers=NBA_HEADERS)
+        player_bio = player_info.get_dict()
+        player_data = player_bio['resultSets'][0]['rowSet'][0]
+        team_id = int(player_data[18])
+    except Exception:
+        team_id = 0
 
-    # begin scrapping for image url
-    url = f'https://www.nba.com/player/{player_id}'
-
-    # Make an HTTP GET request to the URL
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
-
-    # Parse the HTML content using BeautifulSoup
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Find the player image tag within the appropriate class or element
-    player_image_div = soup.find('div', {'class': 'PlayerSummary_mainInnerTeam____nFZ'})
-    if player_image_div:
-        img_tag = player_image_div.find('img',
-                                        {'class': 'PlayerImage_image__wH_YX PlayerSummary_playerImage__sysif'})
-
-        if img_tag:
-            head_shot_url = img_tag['src']
-            return head_shot_url, team_id
-
-    return None
+    return head_shot_url, team_id
 
 
 # function for getting comparison graph
@@ -427,7 +421,7 @@ def get_game_log(player_id, season, season_type):
         game_log = PlayerGameLog(player_id=player_id, season=season, season_type_all_star=season_type, proxy=proxy_url)
         game_data = game_log.get_data_frames()[0]  # Get the first DataFrame from the list
     else:
-        game_log = PlayerGameLog(player_id=player_id, season=season, season_type_all_star=season_type)
+        game_log = PlayerGameLog(player_id=player_id, season=season, season_type_all_star=season_type, headers=NBA_HEADERS)
         game_data = game_log.get_data_frames()[0]
 
     # select and rename relevant columns
@@ -457,7 +451,8 @@ def get_shot_chart(player_id, team_id, season, season_type, context_measure):
             player_id=player_id,
             season_type_all_star=season_type,
             season_nullable=season,
-            context_measure_simple=context_measure
+            context_measure_simple=context_measure,
+            headers=NBA_HEADERS
         )
         shot_chart = shot_chart_list.get_data_frames()
 

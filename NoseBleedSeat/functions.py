@@ -5,7 +5,7 @@ from nba_api.stats.endpoints import (
     leagueleaders, 
     playercareerstats,
 )
-from nba_stats.models import PlayerHeadShot, PlayerBio, CareerAwards, LeagueLeaders
+from nba_stats.models import Player, PlayerBio, CareerAwards, LeagueLeaders, TEAM_COLOURS, PlayerStats
 from nba_stats.functions import get_player_image
 from .constants import WORDS
 from django.conf import settings
@@ -14,6 +14,21 @@ import time
 
 
 
+NBA_HEADERS = {
+    'Host': 'stats.nba.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'x-nba-stats-origin': 'stats',
+    'x-nba-stats-token': 'true',
+    'Connection': 'keep-alive',
+    'Referer': 'https://www.nba.com/',
+    'Origin': 'https://www.nba.com',
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache',
+}
+
 def create_proxy_url():
     """Helper function to create the proxy URL."""
     if settings.SMARTPROXY_USERNAME and settings.SMARTPROXY_PASSWORD:
@@ -21,12 +36,103 @@ def create_proxy_url():
         return proxy_url
     else:
         return None
+    
+# new functions
+def save_player_bio(player_name, player_id=None):
+    # Get player_id from name if not provided (e.g. from a search query)
+    if player_id is None:
+        matches = players.find_players_by_full_name(player_name)
+        if not matches:
+            return None
+        player_id = matches[0]['id']
+        player_name = matches[0]['full_name']
+
+
+    # Get or create the Player record so we can use it as a FK
+    image_url = f"https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
+    player_obj, _ = Player.objects.get_or_create(
+        player_id=player_id,
+        defaults={'full_name': player_name, 'image_url': image_url, 'status': 'Active'},
+    )
+
+    # Skip if both records already exist
+    if PlayerBio.objects.filter(player=player_obj).exists() and PlayerStats.objects.filter(player=player_obj).exists():
+        return True
+
+    proxy_url = create_proxy_url()
+
+    for attempt in range(1, 4):
+        try:
+            time.sleep(random.uniform(1, 3) * attempt)  # stagger requests to avoid rate limiting
+            # ── Create Bio (commonplayerinfo) ────────────────────────
+            if proxy_url:
+                print("we've got a proxy!")
+                info = commonplayerinfo.CommonPlayerInfo(player_id=player_id, proxy=proxy_url)
+            else:
+                print("No proxy!")
+                info = commonplayerinfo.CommonPlayerInfo(player_id=player_id, headers=NBA_HEADERS, timeout=60)
+
+            result = info.get_dict()['resultSets'][0]
+            data = result['rowSet'][0]
+            headers = result['headers']
+
+            def get(field):
+                return data[headers.index(field)] if field in headers else None
+
+            PlayerBio.objects.update_or_create(
+                player=player_obj,
+                defaults={
+                    'team': get('TEAM_NAME') or '',
+                    'position': (get('POSITION') or '')[:2],
+                    'school': get('SCHOOL') or '',
+                    'country': get('COUNTRY') or '',
+                    'height': get('HEIGHT') or '',
+                    'weight': float(get('WEIGHT') or 0) or None,
+                    'year': get('DRAFT_YEAR') or None,
+                    'years_pro': int(get('SEASON_EXP') or 0) or None,
+                    'number': int(get('JERSEY') or 0) or None,
+                }
+            )
+            time.sleep(0.6)
+
+            # ── Career stats (playercareerstats) ──────────────
+            if proxy_url:
+                career = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
+            else:
+                career = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS, timeout=60)
+
+            d = career.get_normalized_dict()
+
+            # ── PlayerStats — career per-game averages ────────
+            reg_totals = d.get('CareerTotalsRegularSeason', [])
+            if reg_totals:
+                t = reg_totals[0]
+                gp = t['GP'] or 1
+                PlayerStats.objects.update_or_create(
+                    player=player_obj,
+                    defaults={
+                        'PTS': round(t['PTS'] / gp, 1),
+                        'REB': round(t['REB'] / gp, 1),
+                        'AST': round(t['AST'] / gp, 1),
+                        'BLK': round(t['BLK'] / gp, 1),
+                        'STL': round(t['STL'] / gp, 1),
+                    }
+                )
+            return False
+
+        except Exception as e:
+            print(f"[save_player_bio] attempt {attempt}/3 failed for {player_name}: {e}")
+            if attempt < 3:
+                time.sleep(attempt * 10)
+
+    return None
+
+# old functions
 
 def fetch_player_data(player_name, player_id=None):
-    """Helper function to fetch or create player headshot and bio."""
+    """Helper function to fetch or create player and bio."""
 
-    player_headshot = PlayerHeadShot.objects.filter(player_name=player_name).first()
-    player_bio_data = PlayerBio.objects.filter(player_name=player_name).first()
+    player_bio_data = PlayerBio.objects.filter(player__full_name=player_name).first()
 
     # check for player info using player name
     if player_id is None:
@@ -39,39 +145,28 @@ def fetch_player_data(player_name, player_id=None):
             player_id = player_info[0]['id']
             player_name = player_info[0]['full_name']
 
-    # one more check by player id
-    player_headshot = PlayerHeadShot.objects.filter(player_id=player_id).first()
-    if player_headshot:
-        pass
-    else:
-        player_image = get_player_image(player_id)
-        player_url = player_image[0]
-        player_team_id = player_image[1]
-
-        player_headshot = PlayerHeadShot.objects.create(
+    # look up or create player by id
+    player = Player.objects.filter(player_id=player_id).first()
+    if not player:
+        image_url = f"https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
+        player = Player.objects.create(
             player_id=player_id,
-            player_name=player_name,
-            player_image_url=player_url,
-            team_id=player_team_id,
-            background_colour=None
+            full_name=player_name,
+            image_url=image_url,
+            status='Active',
         )
-        player_headshot.save()
 
-    player_id = player_headshot.player_id
-    player_name = player_headshot.player_name
+    player_id = player.player_id
+    player_name = player.full_name
 
     if not player_bio_data:
 
-        # one more check by id
+        # one more check by player FK
         player_bio_data = PlayerBio.objects.filter(player_id=player_id).first()
-        if player_bio_data:
-            pass
-
-        else:
+        if not player_bio_data:
             player_bio = get_player_bio(player_id)
             player_bio_data = PlayerBio.objects.create(
-                player_id=player_id,
-                player_name=player_name,
+                player=player,
                 school=player_bio.get('education', ''),
                 country=player_bio.get('country', ''),
                 height=player_bio.get('height', ''),
@@ -79,21 +174,13 @@ def fetch_player_data(player_name, player_id=None):
                 year=player_bio.get('year', ''),
                 number=player_bio.get('number', ''),
                 position=player_bio.get('position', ''),
-                team_id=player_bio.get('team_id', ''),
-                team_name=player_bio.get('team_name', ''),
-                status=player_bio.get('status', ''),
-                PTS=player_bio.get('PTS', 0),
-                REB=player_bio.get('REB', 0),
-                AST=player_bio.get('AST', 0),
-                BLK=player_bio.get('BLK', 0),
-                STL=player_bio.get('STL', 0),
+                team=player_bio.get('team', ''),
             )
             player_bio_data.save()
 
     player_bio = player_bio_data.__dict__
-    # player_bio['date'] = player_bio['date'].isoformat()  # to convert date object into string
 
-    return player_headshot, player_bio, player_id
+    return player, player_bio, player_id
 
 def search_team_by_name(search_term, eastern_teams, western_teams):
     """Helper function to search for a team by name in both conferences."""
@@ -191,8 +278,8 @@ def get_league_leaders():
             
             # development without proxy
             else:
-                leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category)
-            
+                leaders = leagueleaders.LeagueLeaders(stat_category_abbreviation=category, headers=NBA_HEADERS)
+
             leaders_info = leaders.get_dict()
 
             # Extract the relevant data from the response
@@ -211,25 +298,19 @@ def get_league_leaders():
 
                 player_id = leaders_info['resultSet']['rowSet'][0][0]
 
-                # Get or create player headshot
-                player_headshot = PlayerHeadShot.objects.filter(player_name=player_name).first()
-
-                if not player_headshot:
-                    player_headshot = get_player_image(player_id)
-                    player_headshot_instance = PlayerHeadShot.objects.create(
+                # Get or create player
+                player = Player.objects.filter(player_id=player_id).first()
+                if not player:
+                    image_url = f"https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
+                    player = Player.objects.create(
                         player_id=player_id,
-                        player_name=player_name,
-                        player_image_url=player_headshot[
-                            0] if player_headshot else "https://static.vecteezy.com/system/resources/thumbnails/004/511/281/small_2x/default-avatar-photo-placeholder-profile-picture-vector.jpg",
-                        team_id=player_headshot[1] if player_headshot else 0,
-                        background_colour=None  # Will be dynamically set later
+                        full_name=player_name,
+                        image_url=image_url,
+                        status='Active',
                     )
-                    player_headshot_instance.save()
 
-                player_headshot = PlayerHeadShot.objects.filter(player_id=player_id).first()
-
-                player_image = player_headshot.player_image_url
-                team_colour = player_headshot.background_colour
+                player_image = player.image_url
+                team_colour = TEAM_COLOURS.get(player.team_id)
 
                 # Stat value
                 stat_value = leaders_info['resultSet']['rowSet'][0][stat_index]
@@ -251,7 +332,7 @@ def get_per_game_stats(player_id):
         player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
+        player_stats = playercareerstats.PlayerCareerStats(player_id=player_id, headers=NBA_HEADERS)
 
     career_dict = player_stats.get_normalized_dict()
     player_career_regular_season_totals = career_dict['CareerTotalsRegularSeason'][0]  # get career totals
@@ -310,7 +391,7 @@ def get_player_bio(player_id):
         player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
+        player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id, headers=NBA_HEADERS)
 
     player_bio = player_info.get_dict()
 
@@ -415,7 +496,7 @@ def get_accolades(player_id):
         player_accolades = playerawards.PlayerAwards(player_id=player_id, proxy=proxy_url)
     # development without proxy
     else:
-        player_accolades = playerawards.PlayerAwards(player_id=player_id)
+        player_accolades = playerawards.PlayerAwards(player_id=player_id, headers=NBA_HEADERS)
 
     # add award descriptions to accolades empty list
     player_awards = player_accolades.get_data_frames()[0]

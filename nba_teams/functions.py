@@ -1,4 +1,4 @@
-from nba_stats.models import PlayerHeadShot
+from nba_stats.models import Player, TEAM_COLOURS
 from nba_stats.functions import get_player_image
 from nba_api.stats.endpoints import teamdetails, commonteamroster, teaminfocommon
 from nba_teams.models import EasternConferenceTeams, WesternConferenceTeams, RetiredPlayers
@@ -8,6 +8,25 @@ import os
 SMARTPROXY_URL = os.getenv('SMARTPROXY_URL')
 SMARTPROXY_USERNAME = os.getenv('SMARTPROXY_USERNAME')
 SMARTPROXY_PASSWORD = os.getenv('SMARTPROXY_PASSWORD')
+
+NBA_HEADERS = {
+    'Host': 'stats.nba.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'x-nba-stats-origin': 'stats',
+    'x-nba-stats-token': 'true',
+    'Connection': 'keep-alive',
+    'Referer': 'https://stats.nba.com/',
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache',
+}
+
+def create_proxy_url():
+    if SMARTPROXY_USERNAME and SMARTPROXY_PASSWORD:
+        return f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    return None
 
 
 def get_team(team_id):
@@ -21,8 +40,7 @@ def get_team(team_id):
 
 
 def get_team_history(team_id):
-    # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
     # this is the info we need
     team_specifics = ['HEADCOACH', 'ARENA']
@@ -30,7 +48,10 @@ def get_team_history(team_id):
     team_championships = {}
 
     # get dictionary of information
-    team_details = teamdetails.TeamDetails(team_id=team_id, proxy=proxy_url)
+    if proxy_url:
+        team_details = teamdetails.TeamDetails(team_id=team_id, proxy=proxy_url)
+    else:
+        team_details = teamdetails.TeamDetails(team_id=team_id, headers=NBA_HEADERS)
     team_details = team_details.get_dict()
 
     # team championships
@@ -50,8 +71,7 @@ def get_team_history(team_id):
 
 
 def retired_players(team_id, team_name):
-    # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
     retired_team = RetiredPlayers.objects.filter(team_id=team_id).first()
     if retired_team:
@@ -61,7 +81,10 @@ def retired_players(team_id, team_name):
     retired_info = ['PLAYERID', 'PLAYER', 'POSITION', 'JERSEY', 'SEASONSWITHTEAM']
     retired_guys = []  # will contain lists of players and their information
 
-    team_details = teamdetails.TeamDetails(team_id=team_id, proxy=proxy_url)
+    if proxy_url:
+        team_details = teamdetails.TeamDetails(team_id=team_id, proxy=proxy_url)
+    else:
+        team_details = teamdetails.TeamDetails(team_id=team_id, headers=NBA_HEADERS)
     team_details = team_details.get_dict()
     retired_headings = team_details['resultSets'][6]['headers']
     retired = team_details['resultSets'][7]['rowSet']
@@ -87,12 +110,14 @@ def retired_players(team_id, team_name):
 
 
 def get_team_roster(team_id):
-    # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
     final_roster = []  # will contain lists of players and their information
     player_info = ['PLAYER_ID', 'PLAYER', 'NUM', 'POSITION', 'HEIGHT', 'WEIGHT', 'AGE', 'EXP']  # also need player id
-    team_details = commonteamroster.CommonTeamRoster(team_id=team_id, proxy=proxy_url)
+    if proxy_url:
+        team_details = commonteamroster.CommonTeamRoster(team_id=team_id, proxy=proxy_url)
+    else:
+        team_details = commonteamroster.CommonTeamRoster(team_id=team_id, headers=NBA_HEADERS)
     team_roster = team_details.get_dict()
     roster_headings = team_roster['resultSets'][0]['headers']
     lakers_roster = team_roster['resultSets'][0]['rowSet']
@@ -119,38 +144,20 @@ def get_team_roster(team_id):
         # get player name
         player_name = player_details[1]
 
-        # get player headshots
-        player_headshot = PlayerHeadShot.objects.filter(player_id=player_id).first()
+        # get player image and team colour
+        player = Player.objects.filter(player_id=player_id).first()
 
-        if not player_headshot:
-            # check for player id
-            player_headshot = get_player_image(player_id)
+        if not player:
+            image_url = f"https://cdn.nba.com/headshots/nba/latest/1040x760/{player_id}.png"
+            player = Player.objects.create(
+                player_id=player_id,
+                full_name=player_name,
+                image_url=image_url,
+                status='Active',
+            )
 
-            # if function returns none
-            if not player_headshot:
-                player_head_shot = "https://media.licdn.com/dms/image/v2/C4E0BAQEke_OTftxqtQ/company-logo_200_200/company-logo_200_200/0/1660575300584/national_basketball_association_logo?e=1733356800&v=beta&t=LJiOxzNM9mfdgbHT2akuXDP2oYH3YUMDpypmkObMSyc"
-                team_colour = "#000000"
-                player_details.append(player_head_shot)
-                player_details.append(team_colour)
-                final_roster.append(player_details)
-                count += 1
-                continue  # return to the top of the for loop
-
-            else:
-                # create and save new instance
-                player_headshot_instance = PlayerHeadShot.objects.create(
-                    player_id=player_id,
-                    player_name=player_name,
-                    player_image_url=player_headshot[0],
-                    team_id=player_headshot[1],
-                    background_colour=None  # This will be dynamically set after saving based on team_id
-                )
-                player_headshot_instance.save()
-
-        # get headshot and append
-        player_headshot = PlayerHeadShot.objects.filter(player_id=player_id).first()
-        player_head_shot = player_headshot.player_image_url
-        team_colour = player_headshot.background_colour
+        player_head_shot = player.image_url
+        team_colour = TEAM_COLOURS.get(player.team_id)
         player_details.append(player_head_shot)
         player_details.append(team_colour)
 
@@ -162,8 +169,7 @@ def get_team_roster(team_id):
 
 
 def get_team_rankings(team_id):
-    # Construct the proxy URL
-    proxy_url = f"http://{SMARTPROXY_USERNAME}:{SMARTPROXY_PASSWORD}@gate.smartproxy.com:10001"
+    proxy_url = create_proxy_url()
 
     team_ranks = {}
 
@@ -187,7 +193,10 @@ def get_team_rankings(team_id):
         'OPP_PTS_PG': 'Opponents Points Per Game',
     }
 
-    rankings = teaminfocommon.TeamInfoCommon(team_id=team_id, proxy=proxy_url)
+    if proxy_url:
+        rankings = teaminfocommon.TeamInfoCommon(team_id=team_id, proxy=proxy_url)
+    else:
+        rankings = teaminfocommon.TeamInfoCommon(team_id=team_id, headers=NBA_HEADERS)
     rankings = rankings.get_dict()
     record_headings = rankings['resultSets'][0]['headers']
     record = rankings['resultSets'][0]['rowSet'][0]

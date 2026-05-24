@@ -1,0 +1,138 @@
+{% load static %}
+{% load custom_tags %}
+<div class="sg-card" id="player1-card"
+     data-player-name="{{ player1.full_name }}"
+     data-player-id="{{ player1.player_id }}"
+     style="--accent: {{ player1_colour }};">
+
+  <div class="sg-card-header">
+    <span class="sg-jersey">#{{ player1_bio.number|default:"—" }}</span>
+    <div>
+      <h2 class="sg-name">{{ player1.full_name }}</h2>
+      <div class="sg-badges">
+        {% if player1_bio.position %}<span class="sg-badge sg-badge-pos">{{ player1_bio.position }}</span>{% endif %}
+        <span class="sg-badge sg-badge-status {% if player1.status == 'Active' %}sg-badge-active{% endif %}">
+          <img src="{% if player1.status == 'Active' %}{% static 'images/modern-ball/orange-ball.png' %}{% else %}{% static 'images/old-ball/navy-ball.png' %}{% endif %}"
+               alt="{{ player1.status }}" class="sg-badge-ball {% if player1.status != 'Active' %}sg-badge-ball-retired{% endif %}">
+          {{ player1.status }}
+        </span>
+      </div>
+    </div>
+    <img src="{% if player1.status == 'Active' %}{% static 'images/modern-ball/orange-ball.png' %}{% else %}{% static 'images/old-ball/navy-ball.png' %}{% endif %}"
+         alt="" class="sg-header-ball {% if player1.status != 'Active' %}sg-header-ball-retired{% endif %}" aria-hidden="true">
+  </div>
+
+  <div class="sg-card-img-wrap" style="background-color: {% if player1.status == 'Active' %}#F85D2B {% else %}#00284D{% endif %};">
+    <img src="{% if player1.status == 'Active' %}{% static 'images/modern-ball/ShotGeek - Modern Basketball - White.png' %}{% else %}{% static 'images/old-ball/ShotGeek - Old Basketball - White.png' %}{% endif %}"
+         alt="" class="sg-card-bg-ball" aria-hidden="true">
+    <a href="{% url 'nba_stats:player_details' player_full_name=player1.full_name player_id=player1.player_id %}">
+      <img src="{{ player1.image_url }}"
+           alt="{{ player1.full_name }}"
+           class="sg-player-img"
+           loading="lazy"
+           onerror="this.onerror=null;this.src='{% static 'images/avatar-silhouette.svg' %}'">
+    </a>
+  </div>
+
+  <div class="sg-bio-grid">
+    <div class="sg-bio-item">
+      <span class="sg-bio-label">TEAM</span>
+      <span>{{ player1.team|default:"—" }}</span>
+    </div>
+    <div class="sg-bio-item">
+      <span class="sg-bio-label">HT / WT</span>
+      <span>{{ player1_bio.height|default:"—" }} / {{ player1_bio.weight|default:"—" }} lb</span>
+    </div>
+    <div class="sg-bio-item">
+      <span class="sg-bio-label">COUNTRY</span>
+      <span>{{ player1_bio.country|default:"—" }}</span>
+    </div>
+    <div class="sg-bio-item">
+      <span class="sg-bio-label">SCHOOL</span>
+      <span>{{ player1_bio.school|default:"—" }}</span>
+    </div>
+    <div class="sg-bio-item">
+      <span class="sg-bio-label">DRAFT YR</span>
+      <span>{{ player1_bio.draft_year|to_int |default:"—" }}</span>
+    </div>
+    <div class="sg-bio-item">
+      <span class="sg-bio-label">DRAFT RD / PICK NUM</span>
+      <span>{{ player1_bio.draft_round|to_int |default:"—" }} / {{ player1_bio.draft_num|to_int |default:"—" }}</span>
+    </div>
+  </div>
+
+  <div class="sg-stats-section">
+    <p class="sg-section-label">Career Averages</p>
+    {% if player1_stats %}
+    <canvas id="chart1" height="160"
+      data-vals="{{ player1_stats_norm.0 }},{{ player1_stats_norm.1 }},{{ player1_stats_norm.2 }},{{ player1_stats_norm.3 }},{{ player1_stats_norm.4 }}"
+      data-raws="{{ player1_stats.PTS }},{{ player1_stats.REB }},{{ player1_stats.AST }},{{ player1_stats.BLK }},{{ player1_stats.STL }}"
+      data-color="{{ player1_colour }}">
+    </canvas>
+    {% else %}
+    <p class="sg-no-stats">No stats on record yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="sg-card-footer">
+    <form hx-post="{% url 'htmx_swap_player1' %}"
+          hx-target="#player1-card"
+          hx-swap="outerHTML"
+          class="sg-swap-form">
+      {% csrf_token %}
+      <div class="position-relative" style="flex: 1;">
+        {{ player1_form.player1_name }}
+        <div id="autocomplete-results-1">{% include "partials/player_auto_complete.html" %}</div>
+      </div>
+      <button type="submit" class="sg-btn">SWAP</button>
+    </form>
+    <a href="{% url 'nba_stats:player_details' player_full_name=player1.full_name player_id=player1.player_id %}"
+       class="sg-btn sg-btn-outline">PROFILE</a>
+  </div>
+
+  {% if player1_error %}
+  <p style="color:#F85D2B; font-size:.8rem; padding: 6px 20px 0; margin:0;">{{ player1_error }}</p>
+  {% endif %}
+
+  <!-- <div id="player1-awards" class="sg-awards-wrap">
+    <button class="sg-btn sg-btn-awards w-100 noloader"
+      hx-get="{% url 'show_career_awards_player1' player1_name=player1.full_name player1_id=player1.player_id %}"
+      hx-target="#player1-awards"
+      hx-swap="outerHTML"
+      hx-trigger="click">
+      SHOW CAREER AWARDS
+    </button>
+  </div> -->
+
+</div>
+
+<script>
+(function () {
+  var el = document.getElementById('chart1');
+  if (!el || el._chartBuilt) return;
+  el._chartBuilt = true;
+  var vals = el.dataset.vals.split(',').map(Number);
+  var raws = el.dataset.raws.split(',');
+  var color = el.dataset.color || '#1d428a';
+  var labels = ['PPG  ' + raws[0], 'RPG  ' + raws[1], 'APG  ' + raws[2], 'BLK  ' + raws[3], 'STL  ' + raws[4]];
+  new Chart(el, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: vals, backgroundColor: color + 'bb', borderColor: color, borderWidth: 1, borderRadius: 4, borderSkipped: false }] },
+    options: {
+      indexAxis: 'y', responsive: true,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { title: ctx => ctx[0].label.split('  ')[0], label: ctx => '  ' + raws[ctx.dataIndex] + ' per game' },
+          backgroundColor: '#00284D', titleColor: '#fff', bodyColor: '#9FD3E5', borderColor: color, borderWidth: 1,
+        }
+      },
+      scales: {
+        x: { min: 0, max: 100, grid: { color: '#dde6ef' }, border: { color: '#dde6ef' }, ticks: { color: '#6a8fb0', font: { family: 'Barlow Condensed', size: 11 }, callback: v => v === 0 || v === 50 || v === 100 ? v : '' } },
+        y: { grid: { display: false }, border: { display: false }, ticks: { color: '#00284D', font: { family: 'Barlow Condensed', size: 13, weight: '700' } } }
+      }
+    }
+  });
+})();
+</script>

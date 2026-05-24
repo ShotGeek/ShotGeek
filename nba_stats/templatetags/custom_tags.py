@@ -12,6 +12,18 @@ register = template.Library()
 
 
 @register.filter
+def to_int(value):
+    if value in (None, ''):
+        return ''
+    if "." in str(value):
+        try:
+            return int(float(value))
+        except ValueError:
+            return value  # Return original value if conversion fails
+    
+    return int(value)
+
+@register.filter
 def percentage(value):
     if value in (None, ''):
         return ''

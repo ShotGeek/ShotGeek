@@ -10,7 +10,13 @@ class PlayerOneForm(forms.Form):
             attrs={
                 'placeholder': 'Search player 1',
                 'class': 'form-control',
-                'aria-label': 'Player Name'
+                'aria-label': 'Player Name',
+                'hx-get': '/autocomplete/player/',  # your URL
+                'hx-trigger': 'keyup changed delay:300ms, search',
+                'hx-target': '#autocomplete-results-1',
+                'hx-swap': 'innerHTML',
+                'hx-indicator': '.htmx-indicator',
+                'autocomplete': 'off',
             }
         ),
         error_messages={
@@ -28,7 +34,13 @@ class PlayerTwoForm(forms.Form):
             attrs={
                 'placeholder': 'Search player 2',
                 'class': 'form-control',
-                'aria-label': 'Player Name'
+                'aria-label': 'Player Name',
+                'hx-get': '/autocomplete/player/',  # your URL
+                'hx-trigger': 'keyup changed delay:300ms, search',
+                'hx-target': '#autocomplete-results-2',
+                'hx-swap': 'innerHTML',
+                'hx-indicator': '.htmx-indicator',
+                'autocomplete': 'off',
             }
         ),
         error_messages={

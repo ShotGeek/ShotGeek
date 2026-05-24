@@ -1,0 +1,38 @@
+{% load static %}
+
+<div class="sg-compare-graph-section">
+
+  <p class="sg-section-label text-center mb-3">
+    {{ player1_name }} vs {{ player2_name }}
+  </p>
+
+  <!-- Stat category selector -->
+  <div class="text-center mb-4">
+    <select name="stat"
+            class="form-select d-inline-block"
+            style="width: auto; min-width: 220px;"
+            hx-get="{% url 'home_compare_graph' player1_name=player1_name player1_id=player1_id player2_name=player2_name player2_id=player2_id %}"
+            hx-target="#compare-section"
+            hx-swap="innerHTML show:#compare-section:top"
+            hx-trigger="change">
+      {% for value, label in form.option.field.choices %}
+        <option value="{{ value }}" {% if value == selected_stat %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  {% if graph_json != 'null' %}
+  <!-- Chart -->
+  <div style="position: relative; height: 320px;">
+    <canvas id="homeCompareChart" data-stat="{{ stat_label }}"></canvas>
+  </div>
+  {% else %}
+  <p class="text-center text-muted" style="padding: 40px 0;">
+    No archive data found for this stat category.
+  </p>
+  {% endif %}
+
+</div>
+
+<!-- Embed graph data for JS to consume (not executed by HTMX) -->
+<script id="compare-graph-data" type="application/json">{{ graph_json|safe }}</script>
