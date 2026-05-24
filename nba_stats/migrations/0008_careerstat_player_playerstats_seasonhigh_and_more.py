@@ -6,6 +6,30 @@ import django.db.models.functions.text
 from django.db import migrations, models
 
 
+POSITION_MAP = {
+    "Point Guard": "PG",
+    "Shooting Guard": "SG",
+    "Small Forward": "SF",
+    "Power Forward": "PF",
+    "Center": "C",
+    "Guard": "G",
+    "Forward": "F",
+}
+
+
+def normalize_positions(apps, schema_editor):
+    PlayerBio = apps.get_model("nba_stats", "PlayerBio")
+    to_update = []
+    for bio in PlayerBio.objects.exclude(position__isnull=True):
+        pos = bio.position or ""
+        if len(pos) <= 2:
+            continue
+        bio.position = POSITION_MAP.get(pos, None)
+        to_update.append(bio)
+    if to_update:
+        PlayerBio.objects.bulk_update(to_update, ["position"])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -361,6 +385,7 @@ class Migration(migrations.Migration):
             name="number",
             field=models.IntegerField(blank=True, null=True),
         ),
+        migrations.RunPython(normalize_positions, migrations.RunPython.noop),
         migrations.AlterField(
             model_name="playerbio",
             name="position",
