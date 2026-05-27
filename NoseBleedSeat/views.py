@@ -327,9 +327,11 @@ def search_autocomplete(request):
     return render(request, 'partials/player_auto_complete.html', context=context)
 
 def about(request):
+    PLAYLIST_ID = os.getenv('PLAYLIST_ID')
     player_form = PlayerSearchForm()
     context = {
         'player_form': player_form,
+        'PLAYLIST_ID': PLAYLIST_ID
 
     }
     return render(request, "about.html", context=context)
