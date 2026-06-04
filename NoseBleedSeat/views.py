@@ -233,8 +233,8 @@ def home(request):
     request.session.pop('player_compare_info', None)
 
     # restore user session or default to Lebron and MJ if there's none
-    player1_name = request.session.get('player1', 'LeBron James')
-    player2_name = request.session.get('player2', 'Michael Jordan')
+    player1_name = request.session.get('player1', 'Jalen Brunson')
+    player2_name = request.session.get('player2', 'Victor Wembanyama')
 
     p1 = _resolve_player(player1_name)
     if not p1:

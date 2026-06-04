@@ -8,7 +8,7 @@
   <div class="sg-card-header">
     <span class="sg-jersey">#{{ player2_bio.number|default:"—" }}</span>
     <div>
-      <h2 class="sg-name">{{ player2.full_name }}</h2>
+      <h2 class="sg-name">{{ player2.full_name }} {% if player2.status == 'Active' and player2.team.full_name == 'New York Knicks' or player2.status == 'Active' and player2.team.full_name == 'San Antonio Spurs' %}<img src="{% static 'images/about/finals-logo.png' %}" alt="Finals" style="width:80px;height:80px;object-fit:contain;vertical-align:middle;margin-left:6px;display:inline-block;flex-shrink:0;">{% endif %}</h2>
       <div class="sg-badges">
         {% if player2_bio.position %}<span class="sg-badge sg-badge-pos">{{ player2_bio.position }}</span>{% endif %}
         <span class="sg-badge sg-badge-status {% if player2.status == 'Active' %}sg-badge-active{% endif %}">
@@ -22,7 +22,7 @@
          alt="" class="sg-header-ball {% if player2.status != 'Active' %}sg-header-ball-retired{% endif %}" aria-hidden="true">
   </div>
 
-  <div class="sg-card-img-wrap" style="background-color: {% if player2.status == 'Active' %}#F85D2B {% else %}#00284D{% endif %};">
+  <div class="sg-card-img-wrap" style="background-color: {{ player2_colour }};">
     <img src="{% if player2.status == 'Active' %}{% static 'images/modern-ball/ShotGeek - Modern Basketball - White.png' %}{% else %}{% static 'images/old-ball/ShotGeek - Old Basketball - White.png' %}{% endif %}"
          alt="" class="sg-card-bg-ball" aria-hidden="true">
     <a href="#">
